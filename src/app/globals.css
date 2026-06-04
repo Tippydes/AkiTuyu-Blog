@@ -1,26 +1,73 @@
+/* Tailwind v4 入口：一行导入即包含 base / components / utilities 三层 */
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* 挂载传统 JS 配置以启用 MD3 嵌套色彩令牌与 darkMode:'class'（路径相对本文件指向仓库根） */
+@config "../../tailwind.config.ts";
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
+  /* ==========================================
+   * Material Design 3 基础亮色令牌体系
+   * 所有组件只消费这些变量，禁止在业务代码里硬编码 hex
+   * ========================================== */
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --md-sys-color-primary: #0061a4;
+    --md-sys-color-on-primary: #ffffff;
+    --md-sys-color-primary-container: #d1e4ff;
+    --md-sys-color-on-primary-container: #001d36;
+
+    --md-sys-color-surface: #fdfcff;
+    --md-sys-color-on-surface: #1a1c1e;
+    --md-sys-color-surface-variant: #e0e2ec;
+    --md-sys-color-on-surface-variant: #43474e;
+    --md-sys-color-inverse-surface: #2f3033;
+
+    --md-sys-color-background: #fdfcff;
+    --md-sys-color-on-background: #1a1c1e;
+
+    --md-sys-color-outline: #74777f;
+    --md-sys-color-outline-variant: #c4c6d0;
+  }
+
+  /* ==========================================
+   * Material Design 3 极客暗黑模式令牌体系
+   * 仅通过根节点挂载 .dark 类即可整站换肤，无需逐组件改色
+   * ========================================== */
+  .dark {
+    --md-sys-color-primary: #9ecaff;
+    --md-sys-color-on-primary: #003258;
+    --md-sys-color-primary-container: #00497d;
+    --md-sys-color-on-primary-container: #d1e4ff;
+
+    /* 引入深色调和色，营造 Mizuki 般的沉浸式夜间极客体验 */
+    --md-sys-color-surface: #121316;
+    --md-sys-color-on-surface: #e2e2e6;
+    --md-sys-color-surface-variant: #43474e;
+    --md-sys-color-on-surface-variant: #c4c6d0;
+    --md-sys-color-inverse-surface: #e2e2e6;
+
+    --md-sys-color-background: #0f1013;
+    --md-sys-color-on-background: #e2e2e6;
+
+    --md-sys-color-outline: #8e9099;
+    --md-sys-color-outline-variant: #43474e;
+  }
+
+  /* ==========================================
+   * 全站核心交互微动效与全局重置
+   * transition-colors 让明暗切换时背景/文字色平滑过渡，消除闪烁
+   * ========================================== */
+  body {
+    @apply bg-background text-background-onBackground antialiased transition-colors duration-300 ease-in-out;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer utilities {
+  /*
+   * 渐进式抽离：高度封装的 Mizuki 风格毛玻璃滤镜类
+   * 在多处浮动面板（侧边栏 / 工作区 / 弹窗）复用，故抽成单一工具类统一维护
+   */
+  .glass-panel {
+    @apply border border-outline-variant/30 bg-surface/70 shadow-glass backdrop-blur-xl dark:shadow-glass-dark;
+  }
 }

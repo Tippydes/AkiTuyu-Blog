@@ -129,29 +129,24 @@ akiblog/
 ├── .next/
 ├── node_modules/
 ├── public/
-├── content/                          # 【Data/Content Layer】 Stores pure markdown/text files
-│   └── posts/                        # Local .mdx blog files
 ├── src/                              # 【Source Directory】
 │   ├── app/                          # 【Page Layer】 Routing, data fetching, and page orchestration
-│   │   ├── blog/[slug]/
-│   │   │   └── page.tsx              # Article detail page controller
 │   │   ├── favicon.ico
-│   │   ├── globals.css               # Global styles
-│   │   ├── layout.tsx                # Global root layout
-│   │   └── page.tsx                  # Home page controller
+│   │   ├── globals.css               # Global styles + MD3 CSS variables + `@config` mount
+│   │   ├── layout.tsx                # Global root layout (RSC, pure orchestration only)
+│   │   └── page.tsx                  # Prompt workspace home controller
 │   ├── components/                   # 【Presentation Layer】 Highly encapsulated UI components
-│   │   ├── blog/                     # Business-level components (PostCard, PostBody, etc.)
-│   │   ├── layout/                   # Structural layout components (Header, Footer, Sidebar, etc.)
+│   │   ├── layout/                   # Structural layout components (Sidebar, Header, Footer, etc.)
+│   │   ├── prompt/                   # Prompt business components (WorkspaceIntro; future PromptCard/Workspace)
 │   │   └── ui/                       # Atomic base design tokens/components (Button, Badge, etc.)
 │   ├── data/                         # 【Static Config Layer】 Non-dynamic structural configs
-│   │   ├── navigation.ts             # Navigation menu matrices
+│   │   ├── navigation.ts             # Navigation / category menu matrices
 │   │   └── site-config.ts            # Website metadata (SEO, social handles, etc.)
 │   ├── hooks/                        # 【State/Logic Layer】 Custom React Hooks
 │   ├── lib/                          # 【Core Service Layer】 Utility functions and parsers
-│   │   ├── mdx.ts                    # MDX rendering and retrieval service
-│   │   └── utils.ts                  # Fundamental utility handlers (e.g., cn class merger)
+│   │   └── utils.ts                  # `cn()` class merger (clsx + tailwind-merge)
 │   └── types/                        # 【Typing Layer】 Global TypeScript type declarations
-│       └── blog.ts                   # Strict data flow dictionary
+│       └── prompt.ts                 # Strict prompt / workflow data flow dictionary
 ├── .gitignore
 ├── AGENTS.md                         # 【AI Coding Standards & Rules】
 ├── CLAUDE.md
@@ -161,10 +156,16 @@ akiblog/
 ├── package-lock.json
 ├── package.json
 ├── postcss.config.mjs
+├── tailwind.config.ts                # 【Tailwind v4 JS config】 MD3 color/radius/shadow tokens + darkMode:'class'
 ├── README.md                         # 【Project Documentation】
 └── tsconfig.json
 
 ```
+
+> 🧩 **Topology Notes (kept in sync with code)**:
+> - This project is a **Prompt Generator workspace**, not an MDX blog — so there is no `content/posts/`; prompt data lives in the `data/` layer and is typed via `types/prompt.ts`.
+> - **Styling runs on Tailwind CSS v4**. `globals.css` uses `@import "tailwindcss";` and mounts the legacy JS config via `@config "../../tailwind.config.ts";`. The JS config exists so MD3 tokens can be declared as **nested color objects** (generating `bg-surface`, `text-surface-onVariant`, `text-brand-onPrimaryContainer`, etc.) and so `darkMode: 'class'` toggles the whole theme via a single `.dark` class.
+> - **Installed dependencies for the mandated `cn()`**: `clsx` + `tailwind-merge` (see §1.3). Framer Motion and Lucide React remain part of the target stack but are **not yet installed** — install them only when a feature actually requires them (§1.5).
 
 ---
 
