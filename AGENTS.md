@@ -9,7 +9,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 You are an expert Frontend Engineer and UI/UX Designer specializing in Modern Web Development (Next.js, Tailwind CSS, TypeScript, and Framer Motion). 
 
 # Project Overview
-Build a highly aesthetic, interactive "Prompt Generator" web application. The design language must be heavily inspired by the "Mizuki" blog theme, implementing a Next-Generation Material Design 3 (MD3) style with a geeky/anime-inspired touch, smooth transitions, and flawless dark/light mode support.
+Build **AkiTuyu** (秋天的二次元小屋) — a highly aesthetic personal anime-flavored blog. The design language is heavily inspired by the "Mizuki" blog theme, implementing a Next-Generation Material Design 3 (MD3) style with a geeky/anime-inspired touch, glassmorphism panels, a sakura-tinted immersive background, smooth transitions, and flawless dark/light mode support. Blog posts are authored as local Markdown files and parsed at build time.
 
 # Tech Stack & Requirements
 - Framework: Next.js (App Router)
@@ -20,7 +20,7 @@ Build a highly aesthetic, interactive "Prompt Generator" web application. The de
 
 # UI/UX & Design Specification (Mizuki Style)
 1. **Layout & Grid:** 
-   - A clean layout with a responsive sidebar for navigation/categories and a main content area for the prompt workspace.
+   - A clean layout with a responsive sidebar for navigation/categories/author card and a main content area for the post feed and articles (desktop left sidebar collapses to a mobile bottom nav).
    - Use large border-radius (e.g., `rounded-3xl` for MD3 compliance) and elegant container shadows.
 2. **Visual Aesthetics:**
    - Glassmorphism effects (`backdrop-blur`, semi-transparent backgrounds) for floating panels.
@@ -30,16 +30,19 @@ Build a highly aesthetic, interactive "Prompt Generator" web application. The de
    - Smooth hover scales, magnetic button effects, and staggered layout animations for cards using Framer Motion.
 
 # Core Functional Features
-1. **Prompt Library / Dashboard:**
-   - Display prompts as beautiful MD3 cards with tags, title, description, and quick-action buttons.
-   - Dynamic search/filter bar (fast client-side filtering by tags/categories like Coding, Creative Writing, Roleplay, etc.).
-2. **Interactive Prompt Builder:**
-   - When a user clicks a prompt card, expand it or open a glassmorphism workspace area.
-   - If a prompt has placeholders (e.g., `{{topic}}`, `{{language}}`), dynamically render input fields or dropdowns for the user to fill out.
-   - Real-time live preview of the final generated prompt as the user types.
-3. **Actions Panel:**
-   - One-click "Copy to Clipboard" with a beautiful toast notification.
-   - "Direct Share" or "Export" functionality.
+1. **Home Post Feed:**
+   - Display posts as beautiful MD3 glass cards with cover gradient, date, reading time, category badge, tags, title, and excerpt.
+   - Category filtering via `/?category=<key>` (server-side filter over the parsed posts).
+   - Staggered card entrance animations using Framer Motion.
+2. **Post Detail (`/posts/[slug]`):**
+   - Render the full article from compiled Markdown into a semantic `<article>` with `.prose-aki` typography bound to MD3 tokens.
+   - Statically generated via `generateStaticParams`; per-post SEO metadata via `generateMetadata`.
+3. **Archive (`/archive`):**
+   - Posts grouped by year (newest first) in a timeline-style list.
+4. **About (`/about`):**
+   - Author biography and social links, sourced entirely from `data/site-config.ts`.
+5. **Theme:**
+   - Light/dark toggle powered by `next-themes` (class strategy), with smooth global color transitions.
 
 # Task Instruction
 Please generate the initial project structure, layout component, and the global Tailwind configuration that sets up the Material Design 3 palette (Primary, Secondary, Surface, Background, etc.) suited for both light and dark modes. Ensure the code is production-ready, modular, and strictly typed.
@@ -128,25 +131,33 @@ When creating new files, adding routes, or adjusting the architecture, you must 
 akiblog/
 ├── .next/
 ├── node_modules/
+├── content/                          # 【Content Layer】 Local Markdown posts (data source for lib/mdx.ts)
+│   └── posts/                        # *.md articles with Frontmatter (title/date/excerpt/category/tags/cover)
 ├── public/
 ├── src/                              # 【Source Directory】
 │   ├── app/                          # 【Page Layer】 Routing, data fetching, and page orchestration
 │   │   ├── favicon.ico
 │   │   ├── globals.css               # Global styles + MD3 CSS variables + `@config` mount
 │   │   ├── layout.tsx                # Global root layout (RSC, pure orchestration only)
-│   │   └── page.tsx                  # Prompt workspace home controller
+│   │   ├── page.tsx                  # Home post-feed controller (reads ?category, orchestrates only)
+│   │   ├── posts/[slug]/page.tsx     # Post detail (SSG via generateStaticParams + generateMetadata)
+│   │   ├── archive/page.tsx          # Archive: posts grouped by year
+│   │   └── about/page.tsx            # About: author bio + social links
 │   ├── components/                   # 【Presentation Layer】 Highly encapsulated UI components
-│   │   ├── layout/                   # Structural layout components (Sidebar, Header, Footer, etc.)
-│   │   ├── prompt/                   # Prompt business components (WorkspaceIntro; future PromptCard/Workspace)
-│   │   └── ui/                       # Atomic base design tokens/components (Button, Badge, etc.)
+│   │   ├── blog/                     # Blog business components (PostCard, PostList, PostMeta, PostBody, SiteHero)
+│   │   ├── layout/                   # Structural layout components (Sidebar, Header, NavLinks)
+│   │   ├── providers/                # Client context providers (ThemeProvider wrapping next-themes)
+│   │   └── ui/                       # Atomic base components (Badge, Icon, ThemeToggle, Reveal)
 │   ├── data/                         # 【Static Config Layer】 Non-dynamic structural configs
-│   │   ├── navigation.ts             # Navigation / category menu matrices
-│   │   └── site-config.ts            # Website metadata (SEO, social handles, etc.)
+│   │   ├── navigation.ts             # Nav items + category matrix + category label map
+│   │   └── site-config.ts            # Site brand/SEO metadata + author info + social links
 │   ├── hooks/                        # 【State/Logic Layer】 Custom React Hooks
 │   ├── lib/                          # 【Core Service Layer】 Utility functions and parsers
+│   │   ├── mdx.ts                    # Markdown parsing/rendering (gray-matter + marked) → typed posts
+│   │   ├── motion.ts                 # Shared Framer Motion variants (stagger / fade-up)
 │   │   └── utils.ts                  # `cn()` class merger (clsx + tailwind-merge)
 │   └── types/                        # 【Typing Layer】 Global TypeScript type declarations
-│       └── prompt.ts                 # Strict prompt / workflow data flow dictionary
+│       └── blog.ts                   # Strict blog data dictionary (Post, PostSummary, PostArchiveGroup)
 ├── .gitignore
 ├── AGENTS.md                         # 【AI Coding Standards & Rules】
 ├── CLAUDE.md
@@ -163,9 +174,9 @@ akiblog/
 ```
 
 > 🧩 **Topology Notes (kept in sync with code)**:
-> - This project is a **Prompt Generator workspace**, not an MDX blog — so there is no `content/posts/`; prompt data lives in the `data/` layer and is typed via `types/prompt.ts`.
-> - **Styling runs on Tailwind CSS v4**. `globals.css` uses `@import "tailwindcss";` and mounts the legacy JS config via `@config "../../tailwind.config.ts";`. The JS config exists so MD3 tokens can be declared as **nested color objects** (generating `bg-surface`, `text-surface-onVariant`, `text-brand-onPrimaryContainer`, etc.) and so `darkMode: 'class'` toggles the whole theme via a single `.dark` class.
-> - **Installed dependencies for the mandated `cn()`**: `clsx` + `tailwind-merge` (see §1.3). Framer Motion and Lucide React remain part of the target stack but are **not yet installed** — install them only when a feature actually requires them (§1.5).
+> - This project is a **personal Markdown blog (AkiTuyu)**. Article source lives at repo-root `content/posts/*.md`; `src/lib/mdx.ts` reads and compiles them into the strict types declared in `types/blog.ts`. Pages are pure controllers that call `lib/mdx` and orchestrate `components/blog/*`.
+> - **Styling runs on Tailwind CSS v4**. `globals.css` uses `@import "tailwindcss";` and mounts the legacy JS config via `@config "../../tailwind.config.ts";`. The JS config exists so MD3 tokens can be declared as **nested color objects** (generating `bg-surface`, `text-surface-onVariant`, `text-brand-onPrimaryContainer`, `bg-secondary-container`, `bg-tertiary-container`, etc.) and so `darkMode: 'class'` toggles the whole theme via a single `.dark` class. The `.prose-aki` component layer styles compiled article HTML strictly with MD3 tokens (no `@tailwindcss/typography` dependency). The `.aki-immersive-bg` utility paints sakura/sky corner glows via `color-mix()` over MD3 container tokens, so it recolors with the theme.
+> - **Installed dependencies**: `clsx` + `tailwind-merge` (mandated `cn()`, §1.3); `gray-matter` + `marked` (Markdown frontmatter + rendering); `next-themes` (class-based dark mode); `framer-motion` (staggered/fade-up animations); `lucide-react` (icons, looked up by name via `components/ui/icon.tsx`).
 
 ---
 

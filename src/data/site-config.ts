@@ -1,19 +1,60 @@
 /**
- * 站点全局元数据与 SEO 配置（静态配置层）
+ * 站点全局元数据与作者信息（静态配置层）
  *
- * 为什么集中存放：根布局的 metadata 及未来各处页眉/页脚均从此处取值，
- * 站点改名、换描述时只需改这一份，杜绝在组件里散落硬编码文案。
+ * 为什么集中在此：站点名、标语、SEO 描述、作者卡片等内容会被根布局、侧边栏、关于页
+ * 等多处消费；统一收口到数据层后，组件只通过 props 接收，杜绝把品牌文案散落在 UI 里。
  */
+
+/** 作者 / 站长信息，渲染于侧边栏底部卡片与「关于」页 */
+export interface SiteAuthor {
+  /** 昵称 */
+  name: string;
+  /** 一句话签名 */
+  handle: string;
+  /** 头像所用的 emoji（零依赖占位，未来可替换为 public/ 头像） */
+  avatarEmoji: string;
+  /** 在线状态文案 */
+  status: string;
+  /** 关于页的多段自我介绍 */
+  bio: readonly string[];
+}
+
+/** 外链入口（侧边栏 / 关于页社交区） */
+export interface SocialLink {
+  label: string;
+  href: string;
+  /** lucide-react 图标名，由叶子组件按名取用 */
+  icon: string;
+}
+
 export const siteConfig = {
-  /** 站点名称（用于标题与侧边栏 Logo） */
-  name: "AkiPrompt",
-  /** 标题后缀 / 标语 */
-  tagline: "Next-Gen MD3 Prompt Workspace",
-  /** 站点描述（SEO） */
-  description: "高度美学化、可交互的提示词工程工作台 —— Mizuki 风格 Material Design 3。",
-  /** 默认语言 */
+  /** 站点品牌名（与仓库 AkiTuyu-Blog 保持一致） */
+  name: "AkiTuyu",
+  /** 站点标语 */
+  tagline: "秋天的二次元小屋",
+  /** SEO 描述 */
+  description:
+    "AkiTuyu —— 一个高度美学化的个人二次元博客：记录技术随笔、番剧杂感与日常碎碎念，落地 Material Design 3 与毛玻璃质感，支持亮 / 暗双模式平滑切换。",
+  /** 语言环境 */
   locale: "zh-CN",
+  /** 作者信息 */
+  author: {
+    name: "Akiba",
+    handle: "@akitippy",
+    avatarEmoji: "🌸",
+    status: "在线 · 摸鱼中",
+    bio: [
+      "你好，我是 Akiba，一个被番剧和代码同时绑架的人。",
+      "这里是我的秋日小屋，存放写代码时的灵光一现、追番后的胡言乱语，以及一些舍不得删的日常。",
+      "技术上喜欢折腾前端与设计系统，审美上偏爱通透的毛玻璃和柔和的樱花色。",
+    ],
+  } satisfies SiteAuthor,
+  /** 社交外链 */
+  socials: [
+    { label: "GitHub", href: "https://github.com/Tippydes", icon: "Code2" },
+    { label: "RSS", href: "/rss.xml", icon: "Rss" },
+    { label: "邮箱", href: "mailto:riben1232@akitippy.dpdns.org", icon: "Mail" },
+  ] satisfies readonly SocialLink[],
 } as const;
 
-/** 站点配置类型，供需要消费元数据的组件做严格约束 */
 export type SiteConfig = typeof siteConfig;

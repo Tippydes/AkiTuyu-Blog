@@ -1,38 +1,93 @@
 import React from "react";
 import Link from "next/link";
-import { navItems } from "@/data/navigation";
+import { categoryItems, navItems } from "@/data/navigation";
 import { siteConfig } from "@/data/site-config";
+import NavLinks from "@/components/layout/nav-links";
+import Icon from "@/components/ui/icon";
 
 /**
- * 全局导航侧边栏（服务端组件 RSC）
+ * 全站侧边栏（服务端组件）
  *
- * 设计意图：移动端折叠为底部固定栏，桌面端演变为高通透度的 MD3 毛玻璃侧边栏，
- * 完整契合 Mizuki 风格的响应式布局。组件保持「纯展示」，菜单数据全部来自 data/navigation。
- * 这里没有任何客户端交互（仅 <Link> 跳转），因此无需降级为 Client Component。
+ * 语义化为 <aside> 辅助区：桌面端为高通透度的毛玻璃常驻栏，移动端塌缩为底部固定导航条。
+ * 仅负责「从数据层取数 + 编排结构」，导航高亮等交互交给叶子客户端组件 NavLinks。
  */
 export default function Sidebar() {
-  // 复杂的多端骨架类名按 1.3 规范抽离，保持 JSX 节点纯净
   const asideStyles =
-    "glass-panel fixed bottom-0 left-0 z-40 h-16 w-full border-t md:sticky md:top-0 md:h-screen md:w-64 md:border-r md:border-t-0";
-  const navStyles =
-    "flex h-full w-full flex-row items-center justify-around px-2 md:flex-col md:items-stretch md:justify-start md:gap-y-1 md:px-4 md:py-8";
-  const linkStyles =
-    "rounded-3xl px-4 py-2 text-sm font-medium text-surface-onVariant transition-colors hover:bg-brand-primaryContainer hover:text-brand-onPrimaryContainer";
+    "glass-panel fixed bottom-0 left-0 z-40 h-16 w-full border-t md:sticky md:top-0 md:h-screen md:w-72 md:border-r md:border-t-0";
+  const innerStyles =
+    "flex h-full w-full flex-row items-center justify-around px-2 md:flex-col md:items-stretch md:justify-start md:gap-y-6 md:overflow-y-auto md:px-5 md:py-7";
 
   return (
     <aside className={asideStyles}>
-      <nav className={navStyles} aria-label="主导航">
-        {/* 桌面端展示的站点 Logo，移动端隐藏以节省底栏空间 */}
-        <strong className="mb-4 hidden px-4 text-xl font-bold tracking-wider text-brand-primary md:block">
-          {siteConfig.name} 🌸
-        </strong>
+      <div className={innerStyles}>
+        {/* 品牌区：移动端隐藏，桌面端展示站点名与标语 */}
+        <Link href="/" className="hidden items-center gap-x-3 px-2 md:flex">
+          <span
+            className="flex h-11 w-11 items-center justify-center rounded-2xl bg-secondary-container text-2xl"
+            aria-hidden="true"
+          >
+            {siteConfig.author.avatarEmoji}
+          </span>
+          <span className="flex flex-col">
+            <strong className="text-lg font-bold tracking-wide text-brand-primary">
+              {siteConfig.name}
+            </strong>
+            <span className="text-xs text-surface-onVariant">
+              {siteConfig.tagline}
+            </span>
+          </span>
+        </Link>
 
-        {navItems.map((item) => (
-          <Link key={item.href} href={item.href} className={linkStyles}>
-            {item.label}
-          </Link>
-        ))}
-      </nav>
+        {/* 主导航：移动端横向铺开，桌面端纵向排列 */}
+        <nav className="w-full" aria-label="主导航">
+          <NavLinks items={navItems} />
+        </nav>
+
+        {/* 分类区：仅桌面端展示，移动端为节省空间隐藏 */}
+        <nav className="hidden w-full flex-col gap-y-1 md:flex" aria-label="文章分类">
+          <p className="px-4 pb-1 text-xs font-semibold uppercase tracking-wider text-surface-onVariant/70">
+            文章分类
+          </p>
+          <ul className="flex flex-col gap-y-1">
+            {categoryItems.map((category) => (
+              <li key={category.key}>
+                <Link
+                  href={`/?category=${category.key}`}
+                  className="flex items-center gap-x-3 rounded-3xl px-4 py-2 text-sm text-surface-onVariant transition-colors hover:bg-surface-variant/50 hover:text-surface-onSurface"
+                >
+                  <Icon
+                    name={category.icon}
+                    className="h-4 w-4 shrink-0"
+                    aria-hidden="true"
+                  />
+                  <span>{category.label}</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
+
+        {/* 作者卡片：钉在侧边栏底部，仅桌面端展示 */}
+        <aside
+          className="mt-auto hidden w-full items-center gap-x-3 rounded-3xl bg-surface-variant/40 px-4 py-3 md:flex"
+          aria-label="站长信息"
+        >
+          <span
+            className="flex h-10 w-10 items-center justify-center rounded-full bg-tertiary-container text-xl"
+            aria-hidden="true"
+          >
+            {siteConfig.author.avatarEmoji}
+          </span>
+          <span className="flex flex-col">
+            <strong className="text-sm font-semibold text-surface-onSurface">
+              {siteConfig.author.name}
+            </strong>
+            <span className="text-xs text-surface-onVariant">
+              {siteConfig.author.status}
+            </span>
+          </span>
+        </aside>
+      </div>
     </aside>
   );
 }

@@ -15,6 +15,18 @@
     --md-sys-color-primary-container: #d1e4ff;
     --md-sys-color-on-primary-container: #001d36;
 
+    /* 樱花粉次要令牌 */
+    --md-sys-color-secondary: #8c4a60;
+    --md-sys-color-on-secondary: #ffffff;
+    --md-sys-color-secondary-container: #ffd9e2;
+    --md-sys-color-on-secondary-container: #3a071d;
+
+    /* 薰衣草第三令牌 */
+    --md-sys-color-tertiary: #6d5677;
+    --md-sys-color-on-tertiary: #ffffff;
+    --md-sys-color-tertiary-container: #f6d9ff;
+    --md-sys-color-on-tertiary-container: #271430;
+
     --md-sys-color-surface: #fdfcff;
     --md-sys-color-on-surface: #1a1c1e;
     --md-sys-color-surface-variant: #e0e2ec;
@@ -37,6 +49,18 @@
     --md-sys-color-on-primary: #003258;
     --md-sys-color-primary-container: #00497d;
     --md-sys-color-on-primary-container: #d1e4ff;
+
+    /* 樱花粉次要令牌（暗色） */
+    --md-sys-color-secondary: #ffb1c5;
+    --md-sys-color-on-secondary: #54233a;
+    --md-sys-color-secondary-container: #6f3651;
+    --md-sys-color-on-secondary-container: #ffd9e2;
+
+    /* 薰衣草第三令牌（暗色） */
+    --md-sys-color-tertiary: #dbbce4;
+    --md-sys-color-on-tertiary: #3d2948;
+    --md-sys-color-tertiary-container: #553f60;
+    --md-sys-color-on-tertiary-container: #f6d9ff;
 
     /* 引入深色调和色，营造 Mizuki 般的沉浸式夜间极客体验 */
     --md-sys-color-surface: #121316;
@@ -69,5 +93,76 @@
    */
   .glass-panel {
     @apply border border-outline-variant/30 bg-surface/70 shadow-glass backdrop-blur-xl dark:shadow-glass-dark;
+  }
+
+  /*
+   * 沉浸式背景：在页面四角投下随主题自适应的柔光（樱花粉 + 天空蓝）
+   * 用 color-mix 让光晕颜色直接取自 MD3 容器令牌，亮/暗模式自动换色，无需重复声明
+   */
+  .aki-immersive-bg {
+    background-image:
+      radial-gradient(
+        55rem 55rem at 100% -10%,
+        color-mix(in srgb, var(--md-sys-color-tertiary-container) 60%, transparent),
+        transparent 60%
+      ),
+      radial-gradient(
+        45rem 45rem at -10% 110%,
+        color-mix(in srgb, var(--md-sys-color-primary-container) 50%, transparent),
+        transparent 60%
+      );
+  }
+}
+
+@layer components {
+  /*
+   * 文章正文排版（自维护的轻量 prose）
+   * 为什么不引 @tailwindcss/typography：正文样式需严格绑定 MD3 令牌，自写一套
+   * 既能保证亮/暗双模式一致，又避免为单一场景引入额外插件（§1.5 零膨胀）。
+   */
+  .prose-aki {
+    @apply leading-7 text-surface-onSurface;
+  }
+  .prose-aki > :first-child {
+    @apply mt-0;
+  }
+  .prose-aki h2 {
+    @apply mt-10 mb-4 text-2xl font-bold tracking-tight text-surface-onSurface;
+  }
+  .prose-aki h3 {
+    @apply mt-8 mb-3 text-xl font-semibold text-surface-onSurface;
+  }
+  .prose-aki p {
+    @apply my-4 text-surface-onVariant;
+  }
+  .prose-aki a {
+    @apply font-medium text-brand-primary underline decoration-brand-primary/40 underline-offset-4 transition-colors hover:decoration-brand-primary;
+  }
+  .prose-aki strong {
+    @apply font-semibold text-surface-onSurface;
+  }
+  .prose-aki ul {
+    @apply my-4 list-disc space-y-2 pl-6 text-surface-onVariant;
+  }
+  .prose-aki ol {
+    @apply my-4 list-decimal space-y-2 pl-6 text-surface-onVariant;
+  }
+  .prose-aki blockquote {
+    @apply my-6 rounded-r-2xl border-l-4 border-brand-primary/60 bg-surface-variant/40 px-5 py-3 italic text-surface-onVariant;
+  }
+  .prose-aki blockquote p {
+    @apply my-1;
+  }
+  .prose-aki code {
+    @apply rounded-md bg-surface-variant/60 px-1.5 py-0.5 font-mono text-[0.85em] text-brand-primary;
+  }
+  .prose-aki pre {
+    @apply my-6 overflow-x-auto rounded-2xl border border-outline-variant/30 bg-surface-variant/40 p-4 text-sm;
+  }
+  .prose-aki pre code {
+    @apply bg-transparent p-0 text-surface-onSurface;
+  }
+  .prose-aki hr {
+    @apply my-8 border-outline-variant/40;
   }
 }

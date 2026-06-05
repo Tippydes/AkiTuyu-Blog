@@ -28,6 +28,20 @@ const config: Config = {
           primaryContainer: "var(--md-sys-color-primary-container)",
           onPrimaryContainer: "var(--md-sys-color-on-primary-container)",
         },
+        // 樱花粉次要令牌：用于标签、强调点缀，带来二次元柔和气质
+        secondary: {
+          DEFAULT: "var(--md-sys-color-secondary)",
+          onSecondary: "var(--md-sys-color-on-secondary)",
+          container: "var(--md-sys-color-secondary-container)",
+          onContainer: "var(--md-sys-color-on-secondary-container)",
+        },
+        // 薰衣草第三令牌：用于分类徽章与次级高亮，丰富色彩层次
+        tertiary: {
+          DEFAULT: "var(--md-sys-color-tertiary)",
+          onTertiary: "var(--md-sys-color-on-tertiary)",
+          container: "var(--md-sys-color-tertiary-container)",
+          onContainer: "var(--md-sys-color-on-tertiary-container)",
+        },
         surface: {
           DEFAULT: "var(--md-sys-color-surface)",
           onSurface: "var(--md-sys-color-on-surface)",
@@ -43,6 +57,10 @@ const config: Config = {
           DEFAULT: "var(--md-sys-color-outline)",
           variant: "var(--md-sys-color-outline-variant)",
         },
+      },
+      // 字体族：映射根布局注入的 Inter 变量字体，保证全站排版统一
+      fontFamily: {
+        sans: ["var(--font-sans)", "system-ui", "sans-serif"],
       },
       // 严格符合 MD3 规范的大圆角令牌，用于卡片与浮动面板
       borderRadius: {
