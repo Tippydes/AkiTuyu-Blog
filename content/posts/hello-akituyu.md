@@ -1,5 +1,5 @@
 ---
-title: "你好，AkiTuyu —— 这间秋日小屋开张了"
+title: "你好，AkiTuyu —— 这间秋日小屋开张了（占位）"
 date: "2026-05-28"
 excerpt: "用 Next.js + Material Design 3 搭一间属于自己的二次元小屋，聊聊它为什么长这样，以及我想在这里写点什么。"
 category: "life"

@@ -1,5 +1,5 @@
 ---
-title: "学习笔记：什么时候才该写 use client"
+title: "学习笔记：什么时候才该写 use client（占位）"
 date: "2026-05-05"
 excerpt: "整理一下 React Server Components 与 Client Components 的边界判断，附上我自己常用的一条决策路径。"
 category: "notes"

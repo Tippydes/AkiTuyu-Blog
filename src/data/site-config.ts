@@ -28,10 +28,9 @@ export interface SocialLink {
 }
 
 export const siteConfig = {
-  /** 站点品牌名（与仓库 AkiTuyu-Blog 保持一致） */
   name: "AkiTuyu",
   /** 站点标语 */
-  tagline: "秋天的二次元小屋",
+  tagline: "秋冬的个人博客",
   /** SEO 描述 */
   description:
     "AkiTuyu —— 一个高度美学化的个人二次元博客：记录技术随笔、番剧杂感与日常碎碎念，落地 Material Design 3 与毛玻璃质感，支持亮 / 暗双模式平滑切换。",
@@ -39,13 +38,13 @@ export const siteConfig = {
   locale: "zh-CN",
   /** 作者信息 */
   author: {
-    name: "Akiba",
-    handle: "@akitippy",
+    name: "Tippydes",
+    handle: "@akituyu",
     avatarEmoji: "🌸",
     status: "在线 · 摸鱼中",
     bio: [
-      "你好，我是 Akiba，一个被番剧和代码同时绑架的人。",
-      "这里是我的秋日小屋，存放写代码时的灵光一现、追番后的胡言乱语，以及一些舍不得删的日常。",
+      "你好，我是 Tippydes，一个被番剧和代码同时绑架的人。",
+      "这里是我的秋冬小屋，存放写代码时的灵光一现、追番后的胡言乱语，以及一些舍不得删的日常。",
       "技术上喜欢折腾前端与设计系统，审美上偏爱通透的毛玻璃和柔和的樱花色。",
     ],
   } satisfies SiteAuthor,
@@ -53,7 +52,7 @@ export const siteConfig = {
   socials: [
     { label: "GitHub", href: "https://github.com/Tippydes", icon: "Code2" },
     { label: "RSS", href: "/rss.xml", icon: "Rss" },
-    { label: "邮箱", href: "mailto:riben1232@akitippy.dpdns.org", icon: "Mail" },
+    { label: "邮箱", href: "kafuchino142857@gmail.com", icon: "Mail" },
   ] satisfies readonly SocialLink[],
 } as const;
 

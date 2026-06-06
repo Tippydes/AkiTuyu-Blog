@@ -45,7 +45,7 @@ export default function AboutPage() {
           id="about-socials-title"
           className="mb-3 text-sm font-semibold uppercase tracking-wider text-surface-onVariant/70"
         >
-          找到我
+          联系我
         </h2>
         <ul className="flex flex-wrap gap-3">
           {socials.map((social) => {

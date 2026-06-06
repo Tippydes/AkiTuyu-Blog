@@ -1,5 +1,5 @@
 ---
-title: "把 Material Design 3 色彩令牌接进 Tailwind v4"
+title: "把 Material Design 3 色彩令牌接进 Tailwind v4（占位）"
 date: "2026-05-20"
 excerpt: "如何用 CSS 变量 + Tailwind 嵌套色彩令牌，让整站只靠一个 .dark 类就能平滑换肤，同时彻底告别硬编码 hex。"
 category: "tech"

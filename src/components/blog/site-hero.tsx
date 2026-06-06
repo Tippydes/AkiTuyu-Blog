@@ -37,7 +37,7 @@ export default function SiteHero({
           id="site-hero-title"
           className="mt-5 text-3xl font-bold tracking-tight text-surface-onSurface md:text-5xl"
         >
-          你好，这里是 {name} 🌸
+          你好，这里是 {name} 
         </h1>
 
         <p className="mt-4 max-w-2xl text-base leading-7 text-surface-onVariant">
