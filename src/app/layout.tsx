@@ -55,7 +55,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
 
           {/* 右侧立绘背景：固定铺满视口右半区，置于内容之下；仅桌面端显示，移动端不渲染 */}
           <div
-            className="aki-side-art pointer-events-none fixed inset-y-0 right-0 -z-10 hidden w-1/2 select-none opacity-80 md:block dark:opacity-50"
+            className="aki-side-art pointer-events-none fixed inset-y-0 right-0 -z-10 hidden w-5/6 select-none opacity-80 md:block dark:opacity-50"
             aria-hidden="true"
           />
 

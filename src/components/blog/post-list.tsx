@@ -21,7 +21,7 @@ export default function PostList({ posts }: PostListProps) {
   if (posts.length === 0) {
     return (
       <p className="rounded-3xl bg-surface-variant/40 px-6 py-10 text-center text-surface-onVariant">
-        这里还没有文章，换个分类看看吧 🌱
+        这里还没有文章，换个分类看看吧
       </p>
     );
   }

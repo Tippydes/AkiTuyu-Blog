@@ -13,8 +13,8 @@ export const staggerContainer: Variants = {
   hidden: {},
   show: {
     transition: {
-      // 每个子项延迟 0.08s 依次出现
-      staggerChildren: 0.08,
+      // 每个子项延迟 0.2s 依次出现
+      staggerChildren: 0.2,
     },
   },
 };

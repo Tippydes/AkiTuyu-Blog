@@ -92,7 +92,7 @@
    * 在多处浮动面板（侧边栏 / 工作区 / 弹窗）复用，故抽成单一工具类统一维护
    */
   .glass-panel {
-    @apply border border-outline-variant/30 bg-surface/70 shadow-glass backdrop-blur-xl dark:shadow-glass-dark;
+    @apply border border-outline-variant/30 bg-surface/30 shadow-glass backdrop-blur-xl dark:shadow-glass-dark;
   }
 
   /*
