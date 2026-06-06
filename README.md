@@ -62,7 +62,7 @@ content/
 
 src/
 ├── app/                  # 【页面层】路由 + 数据读取 + 页面编排（RSC）
-│   ├── globals.css       # 全局样式 + MD3 CSS 变量 + .glass-panel / .aki-immersive-bg / .prose-aki
+│   ├── globals.css       # 全局样式 + MD3 CSS 变量 + .glass-panel / .aki-immersive-bg / .aki-side-art / .prose-aki
 │   ├── layout.tsx        # 全局根布局（纯编排：ThemeProvider + Sidebar + Header + main + footer）
 │   ├── page.tsx          # 首页文章流控制器（读取 ?category 筛选）
 │   ├── posts/[slug]/     # 文章详情（generateStaticParams 静态生成 + generateMetadata）
@@ -87,6 +87,7 @@ src/
 - `tailwind.config.ts` 将这些变量映射为嵌套色彩令牌，从而生成 `bg-surface`、`text-surface-onVariant`、`bg-secondary-container`、`bg-tertiary-container` 等贴合设计语义的工具类。
 - 暗黑模式采用 **`darkMode: 'class'`** + `next-themes`：在根节点挂载 `.dark` 类即可整站换肤；`body` 上的 `transition-colors` 让切换过程平滑无闪烁。
 - 复用型毛玻璃面板统一封装为 `.glass-panel`；首页四角的樱花 / 天空光晕用 `.aki-immersive-bg`（基于 `color-mix()` 取自 MD3 容器令牌，随主题自适应换色）。
+- 右侧立绘背景用 `.aki-side-art`：以 `public/images/Alona_bg.jpg` 为满幅装饰，固定铺满视口右半区、贴右下对齐，左侧用 `mask-image` 柔和淡出以保证正文可读；仅桌面端（`md` 及以上）显示，移动端隐藏，亮 / 暗模式分别用不同透明度适配。要换立绘只需替换该图片或改 `.aki-side-art` 里的路径。
 - 文章正文用自维护的 `.prose-aki` 组件层排版，颜色严格绑定 MD3 令牌，未引入额外排版插件。
 
 ## 编码约定（摘要）

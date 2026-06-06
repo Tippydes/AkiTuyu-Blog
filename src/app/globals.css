@@ -112,6 +112,21 @@
         transparent 60%
       );
   }
+
+  /*
+   * 右侧立绘装饰：铺满视口右半区、贴右下对齐以保证人物完整露出。
+   * 为什么用 background-image 而非 <Image>：这是纯装饰性满幅背景，需要 cover 裁切 +
+   * 遮罩淡出 + 定位控制，CSS 背景比组件更直接；图片路径固定，不违反「禁内联 style」。
+   * mask-image 让画面自左侧柔和淡出，避免压住居中正文、保证可读性。
+   */
+  .aki-side-art {
+    background-image: url("/images/Alona_bg.jpg");
+    background-repeat: no-repeat;
+    background-position: right bottom;
+    background-size: cover;
+    -webkit-mask-image: linear-gradient(to left, #000 48%, transparent 96%);
+    mask-image: linear-gradient(to left, #000 48%, transparent 96%);
+  }
 }
 
 @layer components {
