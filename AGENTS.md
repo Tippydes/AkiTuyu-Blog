@@ -16,7 +16,7 @@ Build **AkiTuyu** (秋天的二次元小屋) — a highly aesthetic personal ani
 - Language: TypeScript
 - Styling: Tailwind CSS (with custom MD3 color tokens and glassmorphism utilities)
 - Animations: Framer Motion (to replicate Mizuki's smooth 'Swup' page transitions and micro-interactions)
-- Icons: Lucide React
+- Icons: Game-Icon-Pack (https://github.com/Nieobie/Game-Icon-Pack) — vendored as native inline SVG React components (no npm icon package; see §2 Topology Notes)
 
 # UI/UX & Design Specification (Mizuki Style)
 1. **Layout & Grid:** 
@@ -109,7 +109,7 @@ The abuse of meaningless `<div>` and `<span>` tags is strictly prohibited. You m
 ### 1.6 Server (RSC) vs Client Components (CC) Strict Boundary (组件边界流)
 
 * **Default to Server**: All files in `src/app/` (pages, layouts, error boundaries) must remain Server Components by default to maintain optimal performance and SEO.
-* **Leaf Component Isolation**: Since Framer Motion and Lucide React icons with interactive behavior require client-side execution, **you must isolate interactivity into smaller leaf components** inside `src/components/` and mark them with `"use client"`. Never turn an entire page into a Client Component just to add a simple click animation.
+* **Leaf Component Isolation**: Since Framer Motion requires client-side execution, **you must isolate interactivity into smaller leaf components** inside `src/components/` and mark them with `"use client"`. Never turn an entire page into a Client Component just to add a simple click animation. Note: the Game-Icon-Pack icons (`components/ui/icons/game/*`) are pure stateless SVG components and render fine in Server Components — they must NOT carry `"use client"`.
 
 ### 1.7 Framer Motion & MD3 Token Abstraction (动画与主题变量化)
 
@@ -148,6 +148,9 @@ akiblog/
 │   │   ├── layout/                   # Structural layout components (Sidebar, Header, NavLinks)
 │   │   ├── providers/                # Client context providers (ThemeProvider wrapping next-themes)
 │   │   └── ui/                       # Atomic base components (Badge, Icon, ThemeToggle, Reveal)
+│   │       └── icons/                # Game-Icon-Pack icon system (native inline SVG, zero npm icon dep)
+│   │           ├── index.ts          # gameIconRegistry (semantic-name → component) + GameIconName type
+│   │           └── game/             # One generated component per icon (currentColor, MD3-tintable)
 │   ├── data/                         # 【Static Config Layer】 Non-dynamic structural configs
 │   │   ├── navigation.ts             # Nav items + category matrix + category label map
 │   │   └── site-config.ts            # Site brand/SEO metadata + author info + social links
@@ -158,6 +161,8 @@ akiblog/
 │   │   └── utils.ts                  # `cn()` class merger (clsx + tailwind-merge)
 │   └── types/                        # 【Typing Layer】 Global TypeScript type declarations
 │       └── blog.ts                   # Strict blog data dictionary (Post, PostSummary, PostArchiveGroup)
+├── scripts/                          # 【Dev Tooling】 Dependency-free maintenance scripts
+│   └── sync-game-icons.mjs           # Cleans selected Game-Icon-Pack SVGs → inline components + registry
 ├── .gitignore
 ├── AGENTS.md                         # 【AI Coding Standards & Rules】
 ├── CLAUDE.md
@@ -176,7 +181,8 @@ akiblog/
 > 🧩 **Topology Notes (kept in sync with code)**:
 > - This project is a **personal Markdown blog (AkiTuyu)**. Article source lives at repo-root `content/posts/*.md`; `src/lib/mdx.ts` reads and compiles them into the strict types declared in `types/blog.ts`. Pages are pure controllers that call `lib/mdx` and orchestrate `components/blog/*`.
 > - **Styling runs on Tailwind CSS v4**. `globals.css` uses `@import "tailwindcss";` and mounts the legacy JS config via `@config "../../tailwind.config.ts";`. The JS config exists so MD3 tokens can be declared as **nested color objects** (generating `bg-surface`, `text-surface-onVariant`, `text-brand-onPrimaryContainer`, `bg-secondary-container`, `bg-tertiary-container`, etc.) and so `darkMode: 'class'` toggles the whole theme via a single `.dark` class. The `.prose-aki` component layer styles compiled article HTML strictly with MD3 tokens (no `@tailwindcss/typography` dependency). The `.aki-immersive-bg` utility paints sakura/sky corner glows via `color-mix()` over MD3 container tokens, so it recolors with the theme. The `.aki-side-art` utility renders a full-bleed decorative splash (`public/images/Alona_bg.jpg`) pinned to the right half of the viewport (`background-size: cover`, anchored `right bottom`) with a left-side `mask-image` fade so it never hurts content legibility; it is mounted as an `aria-hidden` decorative element in `layout.tsx` and is desktop-only (`hidden md:block`, with per-theme opacity).
-> - **Installed dependencies**: `clsx` + `tailwind-merge` (mandated `cn()`, §1.3); `gray-matter` + `marked` (Markdown frontmatter + rendering); `next-themes` (class-based dark mode); `framer-motion` (staggered/fade-up animations); `lucide-react` (icons, looked up by name via `components/ui/icon.tsx`).
+> - **Icon system (Game-Icon-Pack, zero npm icon dependency)**: Icons come from the open-source [Game-Icon-Pack](https://github.com/Nieobie/Game-Icon-Pack) (fully rounded, no sharp edges — matches the MD3 + glassmorphism aesthetic). Per §1.5 we do **not** install any npm icon package. Instead, the needed SVGs are vendored as **native inline React components** under `src/components/ui/icons/game/*.tsx`, aggregated into `gameIconRegistry` (`semantic-name → component`) in `icons/index.ts`. `components/ui/icon.tsx` (`<Icon name="..." className="..." />`) looks a component up by name; the data layer (`navigation.ts` / `site-config.ts`) only stores the **semantic name** string, preserving data-UI decoupling. The source SVGs are single-path monochrome with `fill` stripped, so the components inherit `currentColor` and are tintable by any MD3 token (`text-primary`, `text-surface-onVariant`, …); default size is `h-5 w-5`, overridable via `className`. **Registered names**: `home`, `archive`, `user`, `code`, `sparkle`, `daily`, `notes`, `rss`, `mail`, `calendar`, `clock`, `tag`, `arrow-left`, `dark-mode`, `light-mode`. **To add/replace an icon**: register `semantic-name → "<Category>/<file>.svg"` in `scripts/sync-game-icons.mjs`'s `ICON_MAP`, then run `GAME_ICON_SRC=/path/to/Game-Icon-Pack/svg-v1.0.3 node scripts/sync-game-icons.mjs` (downloaded from the pack's Releases). The generated `game/*.tsx` and `index.ts` are committed; never hand-edit them.
+> - **Installed dependencies**: `clsx` + `tailwind-merge` (mandated `cn()`, §1.3); `gray-matter` + `marked` (Markdown frontmatter + rendering); `next-themes` (class-based dark mode); `framer-motion` (staggered/fade-up animations). Icons are **not** an npm dependency — see the icon-system note above.
 
 ---
 

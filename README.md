@@ -14,7 +14,7 @@
 | 内容 | 本地 Markdown（`content/posts/*.md`），由 `gray-matter` 解析 Frontmatter、`marked` 渲染正文 |
 | 主题 | `next-themes`（`class` 策略的亮 / 暗切换） |
 | 动效 | `framer-motion`（卡片交错入场、上浮淡入） |
-| 图标 | `lucide-react`（经 `components/ui/icon.tsx` 按名取用） |
+| 图标 | [Game-Icon-Pack](https://github.com/Nieobie/Game-Icon-Pack)—全圆角风格，以原生内联 SVG 组件形式收编（**零 npm 图标依赖**，经 `components/ui/icon.tsx` 按名取用） |
 | 类名合并 | `clsx` + `tailwind-merge`（封装为 `cn()`） |
 | 字体 | `next/font/google` — Inter（变量字体） |
 
@@ -73,10 +73,14 @@ src/
 │   ├── layout/           # 结构级组件：Sidebar、Header、NavLinks
 │   ├── providers/        # 客户端上下文：ThemeProvider（包裹 next-themes）
 │   └── ui/               # 原子级组件：Badge、Icon、ThemeToggle、Reveal
+│       └── icons/        # Game-Icon-Pack 图标系统：index.ts（注册表）+ game/*.tsx（内联 SVG）
 ├── data/                 # 【静态配置层】navigation.ts（导航+分类矩阵）、site-config.ts（站点+作者信息）
 ├── hooks/                # 【状态逻辑层】自定义 React Hooks
 ├── lib/                  # 【核心服务层】mdx.ts（Markdown 解析）、motion.ts（动效变体）、utils.ts（cn()）
 └── types/                # 【类型层】blog.ts → 文章数据字典（Post / PostSummary / PostArchiveGroup）
+
+scripts/
+└── sync-game-icons.mjs   # 【开发工具】零依赖：清洗选定 Game-Icon-Pack SVG → 内联组件 + 注册表
 ```
 
 完整拓扑及各层职责见 [`AGENTS.md` §2](./AGENTS.md)。
@@ -89,6 +93,20 @@ src/
 - 复用型毛玻璃面板统一封装为 `.glass-panel`；首页四角的樱花 / 天空光晕用 `.aki-immersive-bg`（基于 `color-mix()` 取自 MD3 容器令牌，随主题自适应换色）。
 - 右侧立绘背景用 `.aki-side-art`：以 `public/images/Alona_bg.jpg` 为满幅装饰，固定铺满视口右半区、贴右下对齐，左侧用 `mask-image` 柔和淡出以保证正文可读；仅桌面端（`md` 及以上）显示，移动端隐藏，亮 / 暗模式分别用不同透明度适配。要换立绘只需替换该图片或改 `.aki-side-art` 里的路径。
 - 文章正文用自维护的 `.prose-aki` 组件层排版，颜色严格绑定 MD3 令牌，未引入额外排版插件。
+
+## 图标系统（Game-Icon-Pack，零 npm 图标依赖）
+
+图标来自开源的 [Game-Icon-Pack](https://github.com/Nieobie/Game-Icon-Pack)（全圆角、无尖锐边缘，贴合本站 MD3 + 玻璃拟态美学）。依据「零冗余依赖」原则，我们 **不安装任何 npm 图标包**，而是把用到的 SVG 收编为原生内联 React 组件。
+
+- **结构**：`src/components/ui/icons/game/*.tsx` 每图标一个组件 → `icons/index.ts` 汇总为 `gameIconRegistry`（语义名 → 组件）。
+- **用法**：`<Icon name="home" className="h-5 w-5 text-brand-primary" />`。数据层（`navigation.ts` / `site-config.ts`）只存语义名字符串，与图标实现解耦。
+- **上色**：源 SVG 为单色路径、已剔除 `fill`，组件继承 `currentColor`，故可被任意 MD3 颜色令牌（`text-primary` / `text-surface-onVariant` …）染色；默认尺寸 `h-5 w-5`，可用 `className` 覆盖。
+- **已登记图标**：`home`、`archive`、`user`（主导航）；`code`、`sparkle`、`daily`、`notes`（文章分类）；`rss`、`mail`（社交）；`calendar`、`clock`、`tag`（文章元信息）；`arrow-left`、`dark-mode`、`light-mode`（交互）。
+- **新增 / 替换图标**：从图标包 Releases 下载 SVG，在 `scripts/sync-game-icons.mjs` 的 `ICON_MAP` 里登记「语义名 → `<分类>/<文件>.svg`」，再运行：
+  ```bash
+  GAME_ICON_SRC=/path/to/Game-Icon-Pack/svg-v1.0.3 node scripts/sync-game-icons.mjs
+  ```
+  脚本会自动清洗并生成 `game/*.tsx` 与 `index.ts`（均已提交，**请勿手改**）。
 
 ## 编码约定（摘要）
 
