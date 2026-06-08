@@ -13,7 +13,7 @@ export interface NavItem {
   label: string;
   /** 路由地址 */
   href: string;
-  /** lucide-react 图标名（由叶子组件按名映射为图标组件） */
+  /** Game-Icon-Pack 语义图标名（由 <Icon> 按名映射为内联图标组件） */
   icon: string;
 }
 
@@ -23,23 +23,23 @@ export interface CategoryItem {
   key: PostCategory;
   /** 分类中文名 */
   label: string;
-  /** lucide-react 图标名 */
+  /** Game-Icon-Pack 语义图标名 */
   icon: string;
 }
 
 /** 顶层主导航：首页文章流 / 归档 / 关于 */
 export const navItems: readonly NavItem[] = [
-  { label: "首页", href: "/", icon: "Home" },
-  { label: "归档", href: "/archive", icon: "Archive" },
-  { label: "关于", href: "/about", icon: "User" },
+  { label: "首页", href: "/", icon: "home" },
+  { label: "归档", href: "/archive", icon: "archive" },
+  { label: "关于", href: "/about", icon: "user" },
 ] as const;
 
 /** 文章分类矩阵：用于侧边栏分类区与分类筛选 */
 export const categoryItems: readonly CategoryItem[] = [
-  { key: "tech", label: "技术随笔", icon: "Code2" },
-  { key: "anime", label: "番剧杂感", icon: "Sparkles" },
-  { key: "life", label: "日常碎语", icon: "Coffee" },
-  { key: "notes", label: "学习笔记", icon: "NotebookPen" },
+  { key: "tech", label: "技术随笔", icon: "code" },
+  { key: "anime", label: "番剧杂感", icon: "sparkle" },
+  { key: "life", label: "日常碎语", icon: "daily" },
+  { key: "notes", label: "学习笔记", icon: "notes" },
 ] as const;
 
 /**

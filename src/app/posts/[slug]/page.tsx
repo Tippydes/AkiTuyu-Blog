@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
 import { getPostBySlug, getPostSlugs } from "@/lib/mdx";
 import PostMeta from "@/components/blog/post-meta";
 import PostBody from "@/components/blog/post-body";
 import Badge from "@/components/ui/badge";
 import Reveal from "@/components/ui/reveal";
+import Icon from "@/components/ui/icon";
 
 interface PostPageProps {
   // Next.js 16 中动态路由 params 为异步
@@ -51,7 +51,7 @@ export default async function PostPage({ params }: PostPageProps) {
           href="/"
           className="inline-flex items-center gap-x-1.5 text-sm font-medium text-surface-onVariant transition-colors hover:text-brand-primary"
         >
-          <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+          <Icon name="arrow-left" className="h-4 w-4" aria-hidden="true" />
           返回首页
         </Link>
 
