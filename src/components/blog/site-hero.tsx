@@ -23,7 +23,7 @@ export default function SiteHero({
   postCount,
 }: SiteHeroProps) {
   const cardStyles =
-    "glass-panel relative overflow-hidden rounded-4xl p-8 md:p-12";
+    "glass-panel relative !backdrop-blur-xs overflow-hidden rounded-4xl p-8 md:p-12";
 
   return (
     <Reveal>
