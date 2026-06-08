@@ -23,7 +23,7 @@ export interface SiteAuthor {
 export interface SocialLink {
   label: string;
   href: string;
-  /** lucide-react 图标名，由叶子组件按名取用 */
+  /** Game-Icon-Pack 语义图标名，由 <Icon> 按名取用 */
   icon: string;
 }
 
@@ -50,9 +50,9 @@ export const siteConfig = {
   } satisfies SiteAuthor,
   /** 社交外链 */
   socials: [
-    { label: "GitHub", href: "https://github.com/Tippydes", icon: "Code2" },
-    { label: "RSS", href: "/rss.xml", icon: "Rss" },
-    { label: "邮箱", href: "kafuchino142857@gmail.com", icon: "Mail" },
+    { label: "GitHub", href: "https://github.com/Tippydes", icon: "code" },
+    { label: "RSS", href: "/rss.xml", icon: "rss" },
+    { label: "邮箱", href: "kafuchino142857@gmail.com", icon: "mail" },
   ] satisfies readonly SocialLink[],
 } as const;
 

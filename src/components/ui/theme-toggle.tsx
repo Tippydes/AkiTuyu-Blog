@@ -1,8 +1,8 @@
 "use client";
 
 import React from "react";
-import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
+import Icon from "@/components/ui/icon";
 
 /**
  * 亮 / 暗模式切换按钮（客户端叶子）
@@ -28,8 +28,8 @@ export default function ThemeToggle() {
       aria-label="切换亮色 / 暗色模式"
     >
       {/* 亮色态显示月亮（点击转暗），暗色态显示太阳（点击转亮） */}
-      <Moon className="h-5 w-5 dark:hidden" aria-hidden="true" />
-      <Sun className="hidden h-5 w-5 dark:block" aria-hidden="true" />
+      <Icon name="dark-mode" className="h-5 w-5 dark:hidden" aria-hidden="true" />
+      <Icon name="light-mode" className="hidden h-5 w-5 dark:block" aria-hidden="true" />
     </button>
   );
 }

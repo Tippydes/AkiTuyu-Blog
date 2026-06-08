@@ -1,8 +1,8 @@
 import React from "react";
-import { Calendar, Clock } from "lucide-react";
 import type { PostCategory } from "@/types/blog";
 import { categoryLabelMap } from "@/data/navigation";
 import Badge from "@/components/ui/badge";
+import Icon from "@/components/ui/icon";
 import { cn } from "@/lib/utils";
 
 interface PostMetaProps {
@@ -34,11 +34,11 @@ export default function PostMeta({
   return (
     <div className={cn(wrapperStyles, className)}>
       <time dateTime={date} className="inline-flex items-center gap-x-1.5">
-        <Calendar className="h-4 w-4" aria-hidden="true" />
+        <Icon name="calendar" className="h-4 w-4" aria-hidden="true" />
         {formattedDate}
       </time>
       <span className="inline-flex items-center gap-x-1.5">
-        <Clock className="h-4 w-4" aria-hidden="true" />
+        <Icon name="clock" className="h-4 w-4" aria-hidden="true" />
         约 {readingMinutes} 分钟
       </span>
       <Badge variant="category">{categoryLabelMap[category]}</Badge>

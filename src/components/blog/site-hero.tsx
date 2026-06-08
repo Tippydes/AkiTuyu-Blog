@@ -1,6 +1,6 @@
 import React from "react";
-import { Sparkles } from "lucide-react";
 import Reveal from "@/components/ui/reveal";
+import Icon from "@/components/ui/icon";
 
 interface SiteHeroProps {
   name: string;
@@ -29,7 +29,7 @@ export default function SiteHero({
     <Reveal>
       <section aria-labelledby="site-hero-title" className={cardStyles}>
         <p className="inline-flex items-center gap-x-2 rounded-full bg-secondary-container px-3 py-1 text-sm font-medium text-secondary-onContainer">
-          <Sparkles className="h-4 w-4" aria-hidden="true" />
+          <Icon name="sparkle" className="h-4 w-4" aria-hidden="true" />
           {tagline}
         </p>
 
