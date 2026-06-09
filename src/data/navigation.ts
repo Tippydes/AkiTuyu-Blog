@@ -1,4 +1,5 @@
 import type { PostCategory } from "@/types/blog";
+import { projectCategories } from "@/data/projects";
 
 /**
  * 导航与分类矩阵（静态配置层）
@@ -7,7 +8,7 @@ import type { PostCategory } from "@/types/blog";
  * 路由结构一旦调整，只改这里即可全站同步，符合「数据-UI 分离」。
  */
 
-/** 主导航条目 */
+/** 主导航条目（支持一层二级菜单：children 非空即为可展开的父级） */
 export interface NavItem {
   /** 菜单文案 */
   label: string;
@@ -15,6 +16,8 @@ export interface NavItem {
   href: string;
   /** Game-Icon-Pack 语义图标名（由 <Icon> 按名映射为内联图标组件） */
   icon: string;
+  /** 可选的二级子菜单；仅渲染一层，避免无限嵌套带来的导航复杂度 */
+  children?: readonly NavItem[];
 }
 
 /** 分类条目：在主导航之外，单独成区展示文章分类入口 */
@@ -27,10 +30,25 @@ export interface CategoryItem {
   icon: string;
 }
 
-/** 顶层主导航：首页文章流 / 归档 / 关于 */
+/**
+ * 顶层主导航：首页文章流 / 归档 / 项目作品（带二级菜单）/ 关于
+ *
+ * 「项目 / 作品」的二级菜单直接由 data/projects.ts 的分类派生，保证
+ * 菜单项与实际项目页面（/projects/<key>）始终单一数据源、不会两处脱节。
+ */
 export const navItems: readonly NavItem[] = [
   { label: "首页", href: "/", icon: "home" },
   { label: "归档", href: "/archive", icon: "archive" },
+  {
+    label: "项目 / 作品",
+    href: "/projects",
+    icon: "folder",
+    children: projectCategories.map((category) => ({
+      label: category.label,
+      href: `/projects/${category.key}`,
+      icon: category.icon,
+    })),
+  },
   { label: "关于", href: "/about", icon: "user" },
 ] as const;
 
