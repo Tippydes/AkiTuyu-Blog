@@ -4,6 +4,7 @@ import { categoryItems, navItems } from "@/data/navigation";
 import { siteConfig } from "@/data/site-config";
 import NavLinks from "@/components/layout/nav-links";
 import Icon from "@/components/ui/icon";
+import Avatar from "@/components/ui/avatar";
 
 /**
  * 全站侧边栏（服务端组件）
@@ -22,12 +23,13 @@ export default function Sidebar() {
       <div className={innerStyles}>
         {/* 品牌区：移动端隐藏，桌面端展示站点名与标语 */}
         <Link href="/" className="hidden items-center gap-x-3 px-2 md:flex">
-          <span
-            className="flex h-11 w-11 items-center justify-center rounded-2xl bg-secondary-container text-2xl"
-            aria-hidden="true"
-          >
-            {siteConfig.author.avatarEmoji}
-          </span>
+          <Avatar
+            src={siteConfig.author.avatar}
+            alt={`${siteConfig.author.name} 的头像`}
+            className="h-11 w-11 rounded-2xl"
+            sizes="44px"
+            priority
+          />
           <span className="flex flex-col">
             <strong className="text-lg font-bold tracking-wide text-brand-primary">
               {siteConfig.name}
@@ -72,12 +74,12 @@ export default function Sidebar() {
           className="mt-auto hidden w-full items-center gap-x-3 rounded-3xl bg-surface-variant/40 px-4 py-3 md:flex"
           aria-label="站长信息"
         >
-          <span
-            className="flex h-10 w-10 items-center justify-center rounded-full bg-tertiary-container text-xl"
-            aria-hidden="true"
-          >
-            {siteConfig.author.avatarEmoji}
-          </span>
+          <Avatar
+            src={siteConfig.author.avatar}
+            alt={`${siteConfig.author.name} 的头像`}
+            className="h-10 w-10 rounded-full"
+            sizes="40px"
+          />
           <span className="flex flex-col">
             <strong className="text-sm font-semibold text-surface-onSurface">
               {siteConfig.author.name}
