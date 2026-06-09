@@ -73,11 +73,11 @@ src/
 ├── components/           # 【表现层】纯展示 UI 组件（仅靠 props 渲染）
 │   ├── blog/             # 博客业务组件：PostCard、PostList、PostMeta、PostBody、SiteHero
 │   ├── projects/         # 项目业务组件：ProjectCard、ProjectList
-│   ├── layout/           # 结构级组件：Sidebar、Header、NavLinks（一级展开的二级菜单）、Breadcrumbs（顶部面包屑）
+│   ├── layout/           # 结构级组件：Sidebar、Header、NavLinks（主导航二级菜单）、CategoryNav（文章分类可折叠二级菜单）、Breadcrumbs（顶部面包屑）
 │   ├── providers/        # 客户端上下文：ThemeProvider（包裹 next-themes）
 │   └── ui/               # 原子级组件：Badge、Icon、ThemeToggle、Reveal、Avatar（站长头像，next/image）
 │       └── icons/        # Game-Icon-Pack 图标系统：index.ts（注册表）+ game/*.tsx（内联 SVG）
-├── data/                 # 【静态配置层】navigation.ts（导航+二级菜单+分类矩阵）、projects.ts（项目分类）、site-config.ts（站点+作者信息）
+├── data/                 # 【静态配置层】navigation.ts（导航+二级菜单+分类矩阵，分类渲染为可折叠二级菜单）、projects.ts（项目分类）、site-config.ts（站点+作者信息）
 ├── hooks/                # 【状态逻辑层】自定义 React Hooks
 ├── lib/                  # 【核心服务层】mdx.ts（Markdown 解析 + slug→标题映射）、breadcrumbs.ts（路由→面包屑层级纯函数）、motion.ts（动效变体）、utils.ts（cn()）
 └── types/                # 【类型层】blog.ts → 文章数据字典；project.ts → 项目数据字典（ProjectCategory / ProjectItem）
@@ -116,7 +116,7 @@ scripts/
 - **全中文注释**：核心逻辑 / 解析函数 / 复杂转换需用中文解释「为什么」。
 - **严格语义化 HTML**：`<main>`/`<header>`/`<nav>`/`<aside>`/`<section>`/`<article>`/`<time>`，杜绝 div 汤。
 - **数据-UI 分离**：`page.tsx` 只做取数 + 编排；文章放 `content/`、配置放 `data/`；组件仅靠 props 渲染。
-- **RSC 优先**：`app/` 默认服务端组件，`"use client"` 只下沉到最小交互叶子组件（ThemeToggle、NavLinks、PostList、Reveal）。
+- **RSC 优先**：`app/` 默认服务端组件，`"use client"` 只下沉到最小交互叶子组件（ThemeToggle、NavLinks、CategoryNav、PostList、Reveal）。
 - **动态类名**：一律走 `cn()`；MD3 色彩禁止硬编码 hex。
 
 详尽规则与代码黄金范式见 [`AGENTS.md`](./AGENTS.md)。

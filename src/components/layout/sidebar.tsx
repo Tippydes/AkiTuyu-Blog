@@ -1,9 +1,9 @@
-import React from "react";
+import React, { Suspense } from "react";
 import Link from "next/link";
 import { categoryItems, navItems } from "@/data/navigation";
 import { siteConfig } from "@/data/site-config";
 import NavLinks from "@/components/layout/nav-links";
-import Icon from "@/components/ui/icon";
+import CategoryNav from "@/components/layout/category-nav";
 import Avatar from "@/components/ui/avatar";
 
 /**
@@ -45,29 +45,12 @@ export default function Sidebar() {
           <NavLinks items={navItems} />
         </nav>
 
-        {/* 分类区：仅桌面端展示，移动端为节省空间隐藏 */}
-        <nav className="hidden w-full flex-col gap-y-1 md:flex" aria-label="文章分类">
-          <p className="px-4 pb-1 text-xs font-semibold uppercase tracking-wider text-surface-onVariant/70">
-            文章分类
-          </p>
-          <ul className="flex flex-col gap-y-1">
-            {categoryItems.map((category) => (
-              <li key={category.key}>
-                <Link
-                  href={`/?category=${category.key}`}
-                  className="flex items-center gap-x-3 rounded-3xl px-4 py-2 text-sm text-surface-onVariant transition-colors hover:bg-surface-variant/50 hover:text-surface-onSurface"
-                >
-                  <Icon
-                    name={category.icon}
-                    className="h-4 w-4 shrink-0"
-                    aria-hidden="true"
-                  />
-                  <span>{category.label}</span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
+        {/* 分类区：可折叠二级菜单（仅桌面端展示，移动端为节省空间隐藏）
+            CategoryNav 读取 ?category 做命中高亮，依赖 useSearchParams，
+            故用 Suspense 包裹以免拖累 /about、/archive 等静态页的预渲染（§1.6） */}
+        <Suspense fallback={null}>
+          <CategoryNav items={categoryItems} />
+        </Suspense>
 
         {/* 作者卡片：钉在侧边栏底部，仅桌面端展示 */}
         <aside
