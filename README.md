@@ -64,6 +64,7 @@ src/
 ├── app/                  # 【页面层】路由 + 数据读取 + 页面编排（RSC）
 │   ├── globals.css       # 全局样式 + MD3 CSS 变量 + .glass-panel / .aki-immersive-bg / .aki-side-art / .prose-aki
 │   ├── layout.tsx        # 全局根布局（纯编排：ThemeProvider + Sidebar + Header + main + footer）
+│                         #   Header 顶部毛玻璃遮罩条内含面包屑导航（桌面端）
 │   ├── page.tsx          # 首页文章流控制器（读取 ?category 筛选）
 │   ├── posts/[slug]/     # 文章详情（generateStaticParams 静态生成 + generateMetadata）
 │   ├── archive/          # 归档：按年份分组
@@ -72,13 +73,13 @@ src/
 ├── components/           # 【表现层】纯展示 UI 组件（仅靠 props 渲染）
 │   ├── blog/             # 博客业务组件：PostCard、PostList、PostMeta、PostBody、SiteHero
 │   ├── projects/         # 项目业务组件：ProjectCard、ProjectList
-│   ├── layout/           # 结构级组件：Sidebar、Header、NavLinks（支持一级展开的二级菜单）
+│   ├── layout/           # 结构级组件：Sidebar、Header、NavLinks（一级展开的二级菜单）、Breadcrumbs（顶部面包屑）
 │   ├── providers/        # 客户端上下文：ThemeProvider（包裹 next-themes）
 │   └── ui/               # 原子级组件：Badge、Icon、ThemeToggle、Reveal
 │       └── icons/        # Game-Icon-Pack 图标系统：index.ts（注册表）+ game/*.tsx（内联 SVG）
 ├── data/                 # 【静态配置层】navigation.ts（导航+二级菜单+分类矩阵）、projects.ts（项目分类）、site-config.ts（站点+作者信息）
 ├── hooks/                # 【状态逻辑层】自定义 React Hooks
-├── lib/                  # 【核心服务层】mdx.ts（Markdown 解析）、motion.ts（动效变体）、utils.ts（cn()）
+├── lib/                  # 【核心服务层】mdx.ts（Markdown 解析 + slug→标题映射）、breadcrumbs.ts（路由→面包屑层级纯函数）、motion.ts（动效变体）、utils.ts（cn()）
 └── types/                # 【类型层】blog.ts → 文章数据字典；project.ts → 项目数据字典（ProjectCategory / ProjectItem）
 
 scripts/
