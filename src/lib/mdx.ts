@@ -114,6 +114,22 @@ export function getPostSlugs(): string[] {
 }
 
 /**
+ * 构建「slug → 文章标题」映射表
+ *
+ * 为什么需要它：面包屑（顶部页眉）是客户端叶子，无法在浏览器侧读取文件系统，
+ * 故由服务端在 layout 取数后透传。详情页路由 /posts/<slug> 据此把 slug
+ * 还原成可读的中文标题，避免面包屑末级显示成英文 slug。
+ */
+export function getPostTitleMap(): Record<string, string> {
+  return Object.fromEntries(
+    listPostFiles().map((name) => {
+      const { slug, frontmatter } = readPostFile(name);
+      return [slug, frontmatter.title];
+    }),
+  );
+}
+
+/**
  * 按 slug 获取单篇完整文章（含编译后的正文 HTML）
  * 仅文章详情页调用，找不到时返回 null 交由页面触发 notFound()。
  */

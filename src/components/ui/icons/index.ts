@@ -7,12 +7,16 @@ import Code from "./game/code";
 import Sparkle from "./game/sparkle";
 import Daily from "./game/daily";
 import Notes from "./game/notes";
+import Folder from "./game/folder";
+import Laptop from "./game/laptop";
+import Heart from "./game/heart";
 import Rss from "./game/rss";
 import Mail from "./game/mail";
 import Calendar from "./game/calendar";
 import Clock from "./game/clock";
 import Tag from "./game/tag";
 import ArrowLeft from "./game/arrow-left";
+import ChevronDown from "./game/chevron-down";
 import DarkMode from "./game/dark-mode";
 import LightMode from "./game/light-mode";
 
@@ -31,12 +35,16 @@ export const gameIconRegistry = {
   "sparkle": Sparkle,
   "daily": Daily,
   "notes": Notes,
+  "folder": Folder,
+  "laptop": Laptop,
+  "heart": Heart,
   "rss": Rss,
   "mail": Mail,
   "calendar": Calendar,
   "clock": Clock,
   "tag": Tag,
   "arrow-left": ArrowLeft,
+  "chevron-down": ChevronDown,
   "dark-mode": DarkMode,
   "light-mode": LightMode,
 } satisfies Record<string, (props: SVGProps<SVGSVGElement>) => ReactElement>;

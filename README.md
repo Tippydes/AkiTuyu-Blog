@@ -64,20 +64,23 @@ src/
 ├── app/                  # 【页面层】路由 + 数据读取 + 页面编排（RSC）
 │   ├── globals.css       # 全局样式 + MD3 CSS 变量 + .glass-panel / .aki-immersive-bg / .aki-side-art / .prose-aki
 │   ├── layout.tsx        # 全局根布局（纯编排：ThemeProvider + Sidebar + Header + main + footer）
+│                         #   Header 顶部毛玻璃遮罩条内含面包屑导航（桌面端）
 │   ├── page.tsx          # 首页文章流控制器（读取 ?category 筛选）
 │   ├── posts/[slug]/     # 文章详情（generateStaticParams 静态生成 + generateMetadata）
 │   ├── archive/          # 归档：按年份分组
+│   ├── projects/         # 项目 / 作品总览 + [category]/ 三个分类子页（SSG：blog-source/personal/oss）
 │   └── about/            # 关于：作者简介 + 社交外链
 ├── components/           # 【表现层】纯展示 UI 组件（仅靠 props 渲染）
 │   ├── blog/             # 博客业务组件：PostCard、PostList、PostMeta、PostBody、SiteHero
-│   ├── layout/           # 结构级组件：Sidebar、Header、NavLinks
+│   ├── projects/         # 项目业务组件：ProjectCard、ProjectList
+│   ├── layout/           # 结构级组件：Sidebar、Header、NavLinks（一级展开的二级菜单）、Breadcrumbs（顶部面包屑）
 │   ├── providers/        # 客户端上下文：ThemeProvider（包裹 next-themes）
 │   └── ui/               # 原子级组件：Badge、Icon、ThemeToggle、Reveal
 │       └── icons/        # Game-Icon-Pack 图标系统：index.ts（注册表）+ game/*.tsx（内联 SVG）
-├── data/                 # 【静态配置层】navigation.ts（导航+分类矩阵）、site-config.ts（站点+作者信息）
+├── data/                 # 【静态配置层】navigation.ts（导航+二级菜单+分类矩阵）、projects.ts（项目分类）、site-config.ts（站点+作者信息）
 ├── hooks/                # 【状态逻辑层】自定义 React Hooks
-├── lib/                  # 【核心服务层】mdx.ts（Markdown 解析）、motion.ts（动效变体）、utils.ts（cn()）
-└── types/                # 【类型层】blog.ts → 文章数据字典（Post / PostSummary / PostArchiveGroup）
+├── lib/                  # 【核心服务层】mdx.ts（Markdown 解析 + slug→标题映射）、breadcrumbs.ts（路由→面包屑层级纯函数）、motion.ts（动效变体）、utils.ts（cn()）
+└── types/                # 【类型层】blog.ts → 文章数据字典；project.ts → 项目数据字典（ProjectCategory / ProjectItem）
 
 scripts/
 └── sync-game-icons.mjs   # 【开发工具】零依赖：清洗选定 Game-Icon-Pack SVG → 内联组件 + 注册表
@@ -101,7 +104,7 @@ scripts/
 - **结构**：`src/components/ui/icons/game/*.tsx` 每图标一个组件 → `icons/index.ts` 汇总为 `gameIconRegistry`（语义名 → 组件）。
 - **用法**：`<Icon name="home" className="h-5 w-5 text-brand-primary" />`。数据层（`navigation.ts` / `site-config.ts`）只存语义名字符串，与图标实现解耦。
 - **上色**：源 SVG 为单色路径、已剔除 `fill`，组件继承 `currentColor`，故可被任意 MD3 颜色令牌（`text-primary` / `text-surface-onVariant` …）染色；默认尺寸 `h-5 w-5`，可用 `className` 覆盖。
-- **已登记图标**：`home`、`archive`、`user`（主导航）；`code`、`sparkle`、`daily`、`notes`（文章分类）；`rss`、`mail`（社交）；`calendar`、`clock`、`tag`（文章元信息）；`arrow-left`、`dark-mode`、`light-mode`（交互）。
+- **已登记图标**：`home`、`archive`、`user`、`folder`（主导航，`folder` 为「项目 / 作品」一级入口）；`code`、`sparkle`、`daily`、`notes`（文章分类）；`code`、`laptop`、`heart`（项目二级菜单：博客源码 / 个人项目 / 开源贡献）；`rss`、`mail`（社交）；`calendar`、`clock`、`tag`（文章元信息）；`arrow-left`、`chevron-down`、`dark-mode`、`light-mode`（交互，`chevron-down` 为二级菜单展开指示）。
 - **新增 / 替换图标**：从图标包 Releases 下载 SVG，在 `scripts/sync-game-icons.mjs` 的 `ICON_MAP` 里登记「语义名 → `<分类>/<文件>.svg`」，再运行：
   ```bash
   GAME_ICON_SRC=/path/to/Game-Icon-Pack/svg-v1.0.3 node scripts/sync-game-icons.mjs
