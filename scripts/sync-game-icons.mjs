@@ -43,6 +43,10 @@ const ICON_MAP = {
   sparkle: "4.Shapes & Symbol/four-pointed-star.svg",
   daily: "2.Media & Technology/message.svg",
   notes: "6.Items/book.svg",
+  // 项目 / 作品（一级入口 + 二级子菜单）
+  folder: "2.Media & Technology/folder.svg",
+  laptop: "2.Media & Technology/laptop.svg",
+  heart: "5.Game/heart.svg",
   // 社交外链
   rss: "2.Media & Technology/audio-waves.svg",
   mail: "2.Media & Technology/mail.svg",
@@ -52,6 +56,7 @@ const ICON_MAP = {
   tag: "2.Media & Technology/tag.svg",
   // 交互
   "arrow-left": "4.Shapes & Symbol/arrow-left.svg",
+  "chevron-down": "4.Shapes & Symbol/arrow-down.svg",
   "dark-mode": "1.UI/dark-mode.svg",
   "light-mode": "1.UI/light-mode.svg",
 };
