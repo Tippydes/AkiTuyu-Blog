@@ -4,6 +4,7 @@ import { siteConfig } from "@/data/site-config";
 import { getPostTitleMap } from "@/lib/mdx";
 import Breadcrumbs from "@/components/layout/breadcrumbs";
 import ThemeToggle from "@/components/ui/theme-toggle";
+import Avatar from "@/components/ui/avatar";
 
 /**
  * 全站页眉（服务端组件）
@@ -24,9 +25,13 @@ export default function Header() {
     <header className={headerStyles}>
       {/* 移动端展示品牌入口，避免与侧边栏品牌区重复 */}
       <Link href="/" className="flex shrink-0 items-center gap-x-2 md:hidden">
-        <span className="text-xl" aria-hidden="true">
-          {siteConfig.author.avatarEmoji}
-        </span>
+        <Avatar
+          src={siteConfig.author.avatar}
+          alt={`${siteConfig.author.name} 的头像`}
+          className="h-8 w-8 rounded-full"
+          sizes="32px"
+          priority
+        />
         <strong className="text-base font-bold tracking-wide text-brand-primary">
           {siteConfig.name}
         </strong>

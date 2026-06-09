@@ -3,6 +3,7 @@ import Link from "next/link";
 import { siteConfig } from "@/data/site-config";
 import Icon from "@/components/ui/icon";
 import Reveal from "@/components/ui/reveal";
+import Avatar from "@/components/ui/avatar";
 
 export const metadata: Metadata = {
   title: "关于",
@@ -22,12 +23,13 @@ export default function AboutPage() {
     <Reveal>
       <article className="glass-panel mx-auto max-w-2xl rounded-4xl p-8 md:p-10">
         <header className="flex items-center gap-x-4">
-          <span
-            className="flex h-16 w-16 items-center justify-center rounded-3xl bg-secondary-container text-3xl"
-            aria-hidden="true"
-          >
-            {author.avatarEmoji}
-          </span>
+          <Avatar
+            src={author.avatar}
+            alt={`${author.name} 的头像`}
+            className="h-16 w-16 rounded-3xl"
+            sizes="64px"
+            priority
+          />
           <span className="flex flex-col">
             <h1 className="text-2xl font-bold tracking-tight text-surface-onSurface">
               {author.name}

@@ -75,7 +75,7 @@ src/
 │   ├── projects/         # 项目业务组件：ProjectCard、ProjectList
 │   ├── layout/           # 结构级组件：Sidebar、Header、NavLinks（一级展开的二级菜单）、Breadcrumbs（顶部面包屑）
 │   ├── providers/        # 客户端上下文：ThemeProvider（包裹 next-themes）
-│   └── ui/               # 原子级组件：Badge、Icon、ThemeToggle、Reveal
+│   └── ui/               # 原子级组件：Badge、Icon、ThemeToggle、Reveal、Avatar（站长头像，next/image）
 │       └── icons/        # Game-Icon-Pack 图标系统：index.ts（注册表）+ game/*.tsx（内联 SVG）
 ├── data/                 # 【静态配置层】navigation.ts（导航+二级菜单+分类矩阵）、projects.ts（项目分类）、site-config.ts（站点+作者信息）
 ├── hooks/                # 【状态逻辑层】自定义 React Hooks

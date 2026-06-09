@@ -11,8 +11,8 @@ export interface SiteAuthor {
   name: string;
   /** 一句话签名 */
   handle: string;
-  /** 头像所用的 emoji（零依赖占位，未来可替换为 public/ 头像） */
-  avatarEmoji: string;
+  /** 头像图片地址（位于 public/，由 next/image 渲染） */
+  avatar: string;
   /** 在线状态文案 */
   status: string;
   /** 关于页的多段自我介绍 */
@@ -40,7 +40,7 @@ export const siteConfig = {
   author: {
     name: "Tippydes",
     handle: "@akituyu",
-    avatarEmoji: "🌸",
+    avatar: "/images/avatar.png",
     status: "在线 · 摸鱼中",
     bio: [
       "你好，我是 Tippydes，一个被番剧和代码同时绑架的人。",
