@@ -28,6 +28,8 @@ export interface CategoryItem {
   label: string;
   /** Game-Icon-Pack 语义图标名 */
   icon: string;
+  /** 分类一句话说明：用于分类总览页 /categories 的卡片副标题 */
+  summary: string;
 }
 
 /**
@@ -52,12 +54,32 @@ export const navItems: readonly NavItem[] = [
   { label: "关于", href: "/about", icon: "user" },
 ] as const;
 
-/** 文章分类矩阵：用于侧边栏分类区与分类筛选 */
+/** 文章分类矩阵：侧边栏分类菜单与独立分类路由（/categories 及其子页）的单一数据源 */
 export const categoryItems: readonly CategoryItem[] = [
-  { key: "tech", label: "技术随笔", icon: "code" },
-  { key: "anime", label: "番剧杂感", icon: "sparkle" },
-  { key: "life", label: "日常碎语", icon: "daily" },
-  { key: "notes", label: "学习笔记", icon: "notes" },
+  {
+    key: "tech",
+    label: "技术随笔",
+    icon: "code",
+    summary: "前端、工程化与折腾过程中的踩坑与心得。",
+  },
+  {
+    key: "anime",
+    label: "番剧杂感",
+    icon: "sparkle",
+    summary: "追番观后感、二次元安利与角色碎碎念。",
+  },
+  {
+    key: "life",
+    label: "日常碎语",
+    icon: "daily",
+    summary: "生活流水账与一些随手记下的小情绪。",
+  },
+  {
+    key: "notes",
+    label: "学习笔记",
+    icon: "notes",
+    summary: "读书、课程与新技术的系统化学习笔记。",
+  },
 ] as const;
 
 /**
@@ -68,3 +90,20 @@ export const categoryLabelMap: Readonly<Record<PostCategory, string>> =
   Object.fromEntries(
     categoryItems.map((item) => [item.key, item.label]),
   ) as Record<PostCategory, string>;
+
+/**
+ * 文章分类独立路由的根路径（单一数据源）
+ *
+ * 为什么集中声明：分类已从「首页 ?category 查询参数」升级为独立路由，
+ * 侧边栏菜单、总览/详情页、面包屑都要拼这个前缀。统一在数据层导出，
+ * 避免各处硬编码 "/categories" 字面量而日后漂移（贯彻「数据-UI 分离」）。
+ */
+export const CATEGORIES_BASE_PATH = "/categories";
+
+/** 文章分类区块的中文标签：侧边栏父级入口与面包屑顶层标签共用，确保措辞一致 */
+export const CATEGORIES_LABEL = "文章分类";
+
+/** 由分类 key 派生其独立详情路由（/categories/<key>），供导航与卡片复用 */
+export function categoryHref(key: PostCategory): string {
+  return `${CATEGORIES_BASE_PATH}/${key}`;
+}

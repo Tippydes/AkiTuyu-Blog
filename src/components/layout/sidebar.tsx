@@ -1,4 +1,4 @@
-import React, { Suspense } from "react";
+import React from "react";
 import Link from "next/link";
 import { categoryItems, navItems } from "@/data/navigation";
 import { siteConfig } from "@/data/site-config";
@@ -46,11 +46,9 @@ export default function Sidebar() {
         </nav>
 
         {/* 分类区：可折叠二级菜单（仅桌面端展示，移动端为节省空间隐藏）
-            CategoryNav 读取 ?category 做命中高亮，依赖 useSearchParams，
-            故用 Suspense 包裹以免拖累 /about、/archive 等静态页的预渲染（§1.6） */}
-        <Suspense fallback={null}>
-          <CategoryNav items={categoryItems} />
-        </Suspense>
+            CategoryNav 现以 usePathname 判定命中高亮（分类已是独立路由 /categories/<key>），
+            不再依赖 useSearchParams，故无需 Suspense 包裹即可保持静态页预渲染（§1.6） */}
+        <CategoryNav items={categoryItems} />
 
         {/* 作者卡片：钉在侧边栏底部，仅桌面端展示 */}
         <aside

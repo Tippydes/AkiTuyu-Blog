@@ -1,6 +1,12 @@
-import { navItems } from "@/data/navigation";
+import {
+  navItems,
+  categoryLabelMap,
+  CATEGORIES_BASE_PATH,
+  CATEGORIES_LABEL,
+} from "@/data/navigation";
 import { projectCategoryMap } from "@/data/projects";
 import type { ProjectCategoryKey } from "@/types/project";
+import type { PostCategory } from "@/types/blog";
 
 /**
  * 面包屑数据构建（核心服务层 · 纯函数）
@@ -21,9 +27,15 @@ export interface Crumb {
  * 顶层路径 → 文案 映射，直接由主导航派生，避免「项目 / 作品」「归档」等
  * 文案在导航与面包屑两处各维护一份而脱节。
  */
-const topLevelLabelMap: Readonly<Record<string, string>> = Object.fromEntries(
-  navItems.filter((item) => item.href !== "/").map((item) => [item.href, item.label]),
-);
+const topLevelLabelMap: Readonly<Record<string, string>> = {
+  ...Object.fromEntries(
+    navItems
+      .filter((item) => item.href !== "/")
+      .map((item) => [item.href, item.label]),
+  ),
+  // 分类总览不在主导航中（仅侧边栏入口），故在此单独补齐其顶层文案
+  [CATEGORIES_BASE_PATH]: CATEGORIES_LABEL,
+};
 
 /**
  * 无独立列表页、不可点击的中间段文案。
@@ -62,6 +74,9 @@ export function buildBreadcrumbs(
     } else if (parentSegment === "projects") {
       // 项目子分类：由 projects 数据层回查中文分类名（blog-source/personal/oss）
       label = projectCategoryMap[segment as ProjectCategoryKey]?.label ?? segment;
+    } else if (parentSegment === "categories") {
+      // 文章分类子页：由 navigation 数据层回查中文分类名（tech/anime/life/notes）
+      label = categoryLabelMap[segment as PostCategory] ?? segment;
     } else if (accumulatedPath in nonNavigableLabelMap) {
       label = nonNavigableLabelMap[accumulatedPath];
       navigable = false;
