@@ -152,19 +152,19 @@
     --aki-ripple-opacity: 0.45;
     --aki-ripple-duration: 520ms;
   }
-  /* 点击涟漪：樱花粉（secondary）实心晕开，强化点击反馈 */
+  /* 点击涟漪：由 MD3 primary 蓝向白绽放的径向渐变实心晕开，强化点击反馈
+   * 说明：白色高光为本站点击反馈的刻意视觉（应需求「蓝→白渐变」），属固定高亮非主题表面色。 */
   .cursor-ripple--click {
-    width: 46px;
-    height: 46px;
-    border: 1.5px solid
-      color-mix(in srgb, var(--md-sys-color-secondary) 60%, transparent);
+    width: 48px;
+    height: 48px;
     background: radial-gradient(
       circle,
-      color-mix(in srgb, var(--md-sys-color-secondary) 55%, transparent) 0%,
-      transparent 70%
+      color-mix(in srgb, var(--md-sys-color-primary) 85%, transparent) 0%,
+      color-mix(in srgb, white 80%, transparent) 55%,
+      transparent 76%
     );
-    --aki-ripple-opacity: 0.7;
-    --aki-ripple-duration: 640ms;
+    --aki-ripple-opacity: 0.85;
+    --aki-ripple-duration: 620ms;
   }
 }
 

@@ -116,9 +116,10 @@ scripts/
 
 全站把系统原生箭头替换为 Game-Icon-Pack 的 `cursor` 图标，并在鼠标移动 / 点击时绽放涟漪，强化二次元交互气质。
 
-- **结构**：逻辑收口于 `src/hooks/use-pointer-fx.ts`（设备探测、坐标平滑、涟漪节流与生成），表现交给客户端叶子 `src/components/ui/cursor-fx.tsx`（在 `layout.tsx` 内挂载一次）。
-- **指针**：复用注册表里的 `<Icon name="cursor" />`，用 MD3 令牌 `text-brand-primary` 上色，**随亮 / 暗主题自动换色**；经 `framer-motion` 的 `useSpring` 平滑跟随，呈 Mizuki 般的轻微拖尾。箭尖热点已按 viewBox 校正，点击点与视觉箭尖对齐。
-- **涟漪**：移动 = 薰衣草（tertiary）细环、点击 = 樱花粉（secondary）实心晕开，关键帧 `aki-cursor-ripple` 定义在 `globals.css`，颜色一律 `color-mix()` 取自 MD3 令牌。移动涟漪按「距离 + 时间」双重节流，播放完毕经 `onAnimationEnd` 自移除，避免 DOM 堆积。
+- **结构**：逻辑收口于 `src/hooks/use-pointer-fx.ts`（设备探测、坐标跟随、涟漪节流与生成），表现交给客户端叶子 `src/components/ui/cursor-fx.tsx`（只渲染静态骨架并把 DOM 引用交给 Hook，在 `layout.tsx` 内挂载一次）。
+- **性能**：指针位置由 `requestAnimationFrame` 每帧指数缓动并**直接改写 DOM transform**，涟漪以原生节点 `appendChild` 生成、`animationend` 自移除——全程**零 React 重渲染**，消除高频移动时的卡顿与跟手延迟（§1.5）。
+- **指针**：复用注册表里的 `<Icon name="cursor" />`，用 MD3 令牌 `text-brand-primary` 上色，**随亮 / 暗主题自动换色**；箭尖热点已按 10×10 viewBox 校正，点击点与视觉箭尖对齐。
+- **涟漪**：移动 = 薰衣草（tertiary）细环，点击 = **MD3 primary 蓝 → 白的径向渐变**晕开；关键帧 `aki-cursor-ripple` 定义在 `globals.css`。移动涟漪按「距离 + 时间」双重节流，避免 DOM 堆积。
 - **降级与无障碍**：仅在「精细指针」（`pointer: fine`，鼠标 / 触控板）设备启用并隐藏原生指针（`html.cursor-fx-active` → `cursor: none`）；触屏自动回退系统交互，`prefers-reduced-motion` 下不生成涟漪。整层 `aria-hidden` + `pointer-events-none`，绝不拦截点击。
 
 ## 编码约定（摘要）
