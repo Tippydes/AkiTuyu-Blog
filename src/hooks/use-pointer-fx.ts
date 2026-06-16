@@ -134,7 +134,17 @@ export function usePointerFx(): PointerFxState {
       if (primed) cursorEl.style.opacity = "1";
     };
 
-    window.addEventListener("pointermove", handleMove, { passive: true });
+    /*
+     * 优先用 pointerrawupdate 而非 pointermove 定位：
+     * pointermove 会被浏览器按帧合并（每帧最多一枚），而 pointerrawupdate 以设备轮询率（可达 1000Hz）
+     * 触发，能在每次合成（vsync）前拿到「最新鲜」的指针坐标，把「事件→JS→合成」管线里那段固有延迟压到最小，
+     * 最大程度缓解自定义指针相对系统硬件指针的滞后。Firefox 暂不支持该事件，回退到 pointermove。
+     */
+    const moveEvent =
+      "onpointerrawupdate" in window ? "pointerrawupdate" : "pointermove";
+    window.addEventListener(moveEvent, handleMove as EventListener, {
+      passive: true,
+    });
     window.addEventListener("pointerdown", handleDown, { passive: true });
     document.addEventListener("pointerleave", hideCursor);
     document.addEventListener("pointerenter", showCursor);
@@ -142,7 +152,7 @@ export function usePointerFx(): PointerFxState {
 
     return () => {
       root.classList.remove("cursor-fx-active");
-      window.removeEventListener("pointermove", handleMove);
+      window.removeEventListener(moveEvent, handleMove as EventListener);
       window.removeEventListener("pointerdown", handleDown);
       document.removeEventListener("pointerleave", hideCursor);
       document.removeEventListener("pointerenter", showCursor);

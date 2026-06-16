@@ -145,8 +145,8 @@
   }
   /* 移动涟漪：薰衣草（tertiary）光环 —— 加粗描边并叠一层淡填充，确保在亮 / 暗背景上都清晰可见 */
   .cursor-ripple--move {
-    width: 30px;
-    height: 30px;
+    width: 56px;
+    height: 56px;
     border: 2px solid
       color-mix(in srgb, var(--md-sys-color-tertiary) 90%, transparent);
     background: radial-gradient(
@@ -155,7 +155,7 @@
       transparent 70%
     );
     --aki-ripple-opacity: 0.7;
-    --aki-ripple-duration: 540ms;
+    --aki-ripple-duration: 560ms;
   }
   /* 点击涟漪：由 MD3 primary 蓝向 secondary 樱花粉绽放的径向渐变实心晕开，强化点击反馈（内蓝外粉，全程 MD3 令牌） */
   .cursor-ripple--click {
