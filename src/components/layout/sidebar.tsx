@@ -1,9 +1,8 @@
-import React, { Suspense } from "react";
+import React from "react";
 import Link from "next/link";
-import { categoryItems, navItems } from "@/data/navigation";
+import { navItems } from "@/data/navigation";
 import { siteConfig } from "@/data/site-config";
 import NavLinks from "@/components/layout/nav-links";
-import CategoryNav from "@/components/layout/category-nav";
 import Avatar from "@/components/ui/avatar";
 
 /**
@@ -40,17 +39,11 @@ export default function Sidebar() {
           </span>
         </Link>
 
-        {/* 主导航：移动端横向铺开，桌面端纵向排列 */}
+        {/* 主导航：移动端横向铺开，桌面端纵向排列。
+            「文章分类」作为其中一个一级项以可展开二级菜单呈现，与其余导航同列（见 navItems）。 */}
         <nav className="w-full" aria-label="主导航">
           <NavLinks items={navItems} />
         </nav>
-
-        {/* 分类区：可折叠二级菜单（仅桌面端展示，移动端为节省空间隐藏）
-            CategoryNav 读取 ?category 做命中高亮，依赖 useSearchParams，
-            故用 Suspense 包裹以免拖累 /about、/archive 等静态页的预渲染（§1.6） */}
-        <Suspense fallback={null}>
-          <CategoryNav items={categoryItems} />
-        </Suspense>
 
         {/* 作者卡片：钉在侧边栏底部，仅桌面端展示 */}
         <aside
