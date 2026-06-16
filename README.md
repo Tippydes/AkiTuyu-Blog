@@ -65,9 +65,10 @@ src/
 │   ├── globals.css       # 全局样式 + MD3 CSS 变量 + .glass-panel / .aki-immersive-bg / .aki-side-art / .prose-aki
 │   ├── layout.tsx        # 全局根布局（纯编排：ThemeProvider + Sidebar + Header + main + footer）
 │                         #   Header 顶部毛玻璃遮罩条内含面包屑导航（桌面端）
-│   ├── page.tsx          # 首页文章流控制器（读取 ?category 筛选）
+│   ├── page.tsx          # 首页文章流控制器（仅展示最新全量文章流，与分类路由解耦）
 │   ├── posts/[slug]/     # 文章详情（generateStaticParams 静态生成 + generateMetadata）
 │   ├── archive/          # 归档：按年份分组
+│   ├── categories/       # 文章分类总览 + [category]/ 四个分类子页（SSG：tech/anime/life/notes）
 │   ├── projects/         # 项目 / 作品总览 + [category]/ 三个分类子页（SSG：blog-source/personal/oss）
 │   └── about/            # 关于：作者简介 + 社交外链
 ├── components/           # 【表现层】纯展示 UI 组件（仅靠 props 渲染）
@@ -77,7 +78,7 @@ src/
 │   ├── providers/        # 客户端上下文：ThemeProvider（包裹 next-themes）
 │   └── ui/               # 原子级组件：Badge、Icon、ThemeToggle、Reveal、Avatar（站长头像，next/image）
 │       └── icons/        # Game-Icon-Pack 图标系统：index.ts（注册表）+ game/*.tsx（内联 SVG）
-├── data/                 # 【静态配置层】navigation.ts（导航：href 可选的纯分组父级 + 一级二级菜单 + desktopOnly；「文章分类」二级由分类矩阵派生）、projects.ts（项目分类）、site-config.ts（站点+作者信息）
+├── data/                 # 【静态配置层】navigation.ts（导航：href 可选 + 一级二级菜单 + desktopOnly；「文章分类」「项目/作品」二级由 categoryItems / projects 派生，含 CATEGORIES_BASE_PATH/categoryHref，分类子项跳转 /categories/<key>）、projects.ts（项目分类）、site-config.ts（站点+作者信息）
 ├── hooks/                # 【状态逻辑层】自定义 React Hooks
 ├── lib/                  # 【核心服务层】mdx.ts（Markdown 解析 + slug→标题映射）、breadcrumbs.ts（路由→面包屑层级纯函数）、motion.ts（动效变体）、utils.ts（cn()）
 └── types/                # 【类型层】blog.ts → 文章数据字典；project.ts → 项目数据字典（ProjectCategory / ProjectItem）
