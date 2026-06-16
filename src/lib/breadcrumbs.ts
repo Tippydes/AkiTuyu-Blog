@@ -1,9 +1,4 @@
-import {
-  navItems,
-  categoryLabelMap,
-  CATEGORIES_BASE_PATH,
-  CATEGORIES_LABEL,
-} from "@/data/navigation";
+import { navItems, categoryLabelMap, type NavItem } from "@/data/navigation";
 import { projectCategoryMap } from "@/data/projects";
 import type { ProjectCategoryKey } from "@/types/project";
 import type { PostCategory } from "@/types/blog";
@@ -13,7 +8,7 @@ import type { PostCategory } from "@/types/blog";
  *
  * 职责：把当前路由 pathname 解析为「首页 / 上级 / 当前页」的层级数组，
  * 文案与可点击层级全部从数据层（navigation.ts / projects.ts）派生，
- * 而非在组件里硬编码。这样导航结构或项目分类一旦调整，面包屑自动跟随，
+ * 而非在组件里硬编码。这样导航结构或分类一旦调整，面包屑自动跟随，
  * 贯彻「数据-UI 分离」与单一数据源原则。
  */
 
@@ -24,18 +19,17 @@ export interface Crumb {
 }
 
 /**
- * 顶层路径 → 文案 映射，直接由主导航派生，避免「项目 / 作品」「归档」等
+ * 顶层路径 → 文案 映射，直接由主导航派生，避免「项目 / 作品」「归档」「文章分类」等
  * 文案在导航与面包屑两处各维护一份而脱节。
  */
-const topLevelLabelMap: Readonly<Record<string, string>> = {
-  ...Object.fromEntries(
-    navItems
-      .filter((item) => item.href !== "/")
-      .map((item) => [item.href, item.label]),
-  ),
-  // 分类总览不在主导航中（仅侧边栏入口），故在此单独补齐其顶层文案
-  [CATEGORIES_BASE_PATH]: CATEGORIES_LABEL,
-};
+const topLevelLabelMap: Readonly<Record<string, string>> = Object.fromEntries(
+  navItems
+    // 排除首页与无 href 的纯分组型项，它们不构成可点击的层级路径
+    .filter((item): item is NavItem & { href: string } =>
+      Boolean(item.href) && item.href !== "/",
+    )
+    .map((item) => [item.href, item.label]),
+);
 
 /**
  * 无独立列表页、不可点击的中间段文案。
@@ -69,14 +63,14 @@ export function buildBreadcrumbs(
     let navigable = true;
 
     if (accumulatedPath in topLevelLabelMap) {
-      // 顶层路由（/archive、/projects、/about）直接复用主导航文案
+      // 顶层路由（/archive、/categories、/projects、/about）直接复用主导航文案
       label = topLevelLabelMap[accumulatedPath];
-    } else if (parentSegment === "projects") {
-      // 项目子分类：由 projects 数据层回查中文分类名（blog-source/personal/oss）
-      label = projectCategoryMap[segment as ProjectCategoryKey]?.label ?? segment;
     } else if (parentSegment === "categories") {
       // 文章分类子页：由 navigation 数据层回查中文分类名（tech/anime/life/notes）
       label = categoryLabelMap[segment as PostCategory] ?? segment;
+    } else if (parentSegment === "projects") {
+      // 项目子分类：由 projects 数据层回查中文分类名（blog-source/personal/oss）
+      label = projectCategoryMap[segment as ProjectCategoryKey]?.label ?? segment;
     } else if (accumulatedPath in nonNavigableLabelMap) {
       label = nonNavigableLabelMap[accumulatedPath];
       navigable = false;
