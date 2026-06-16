@@ -1,4 +1,4 @@
-import { navItems } from "@/data/navigation";
+import { navItems, type NavItem } from "@/data/navigation";
 import { projectCategoryMap } from "@/data/projects";
 import type { ProjectCategoryKey } from "@/types/project";
 
@@ -22,7 +22,12 @@ export interface Crumb {
  * 文案在导航与面包屑两处各维护一份而脱节。
  */
 const topLevelLabelMap: Readonly<Record<string, string>> = Object.fromEntries(
-  navItems.filter((item) => item.href !== "/").map((item) => [item.href, item.label]),
+  navItems
+    // 排除首页与纯分组型（无 href，如「文章分类」）父级：它们不构成可点击的顶层路径
+    .filter((item): item is NavItem & { href: string } =>
+      Boolean(item.href) && item.href !== "/",
+    )
+    .map((item) => [item.href, item.label]),
 );
 
 /**
