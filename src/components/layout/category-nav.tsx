@@ -19,6 +19,9 @@ const activeLinkStyles =
   "bg-brand-primaryContainer text-brand-onPrimaryContainer";
 const idleLinkStyles =
   "text-surface-onVariant hover:bg-surface-variant/50 hover:text-surface-onSurface";
+// 一级标题（展开开关）与主导航顶级项 baseLinkStyles 完全对齐：同字号/字重/内边距
+const topLevelStyles =
+  "flex items-center justify-between rounded-3xl px-4 py-2.5 text-sm font-medium transition-colors";
 
 const SUBMENU_ID = "submenu-categories";
 
@@ -46,11 +49,11 @@ export default function CategoryNav({ items }: CategoryNavProps) {
         onClick={() => setOpen((prev) => !prev)}
         aria-expanded={open}
         aria-controls={SUBMENU_ID}
-        className="flex items-center justify-between rounded-3xl px-4 py-2 text-xs font-semibold uppercase tracking-wider text-surface-onVariant/70 transition-colors hover:bg-surface-variant/40 hover:text-surface-onSurface"
+        className={cn(topLevelStyles, idleLinkStyles)}
       >
-        <span className="flex items-center gap-x-2">
-          <Icon name="tag" className="h-4 w-4 shrink-0" aria-hidden="true" />
-          文章分类
+        <span className="flex items-center gap-x-3">
+          <Icon name="tag" className="h-5 w-5 shrink-0" aria-hidden="true" />
+          <span>文章分类</span>
         </span>
         <Icon
           name="chevron-down"
