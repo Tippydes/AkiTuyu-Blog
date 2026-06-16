@@ -130,6 +130,22 @@ export function getPostTitleMap(): Record<string, string> {
 }
 
 /**
+ * 构建 slug → 所属分类 的映射
+ *
+ * 为什么需要它：文章详情页面包屑要对齐「项目」格式，穿过文章所属分类
+ * （首页 › 文章分类 › 分类名 › 标题）。分类信息不在路由 /posts/<slug> 中，
+ * 故同样由服务端在 Header 取数后透传给客户端面包屑叶子（§1.6 边界）。
+ */
+export function getPostCategoryMap(): Record<string, PostCategory> {
+  return Object.fromEntries(
+    listPostFiles().map((name) => {
+      const { slug, frontmatter } = readPostFile(name);
+      return [slug, frontmatter.category];
+    }),
+  );
+}
+
+/**
  * 按 slug 获取单篇完整文章（含编译后的正文 HTML）
  * 仅文章详情页调用，找不到时返回 null 交由页面触发 notFound()。
  */

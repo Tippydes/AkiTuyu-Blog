@@ -1,4 +1,11 @@
-import { navItems, categoryLabelMap, type NavItem } from "@/data/navigation";
+import {
+  navItems,
+  categoryLabelMap,
+  categoryHref,
+  CATEGORIES_BASE_PATH,
+  CATEGORIES_LABEL,
+  type NavItem,
+} from "@/data/navigation";
 import { projectCategoryMap } from "@/data/projects";
 import type { ProjectCategoryKey } from "@/types/project";
 import type { PostCategory } from "@/types/blog";
@@ -32,27 +39,35 @@ const topLevelLabelMap: Readonly<Record<string, string>> = Object.fromEntries(
 );
 
 /**
- * 无独立列表页、不可点击的中间段文案。
- * 例如 /posts/<slug>：站内没有 /posts 列表路由，故「文章」一节只作层级提示、不可跳转。
- */
-const nonNavigableLabelMap: Readonly<Record<string, string>> = {
-  "/posts": "文章",
-};
-
-/**
  * 由 pathname 构建面包屑层级
  *
  * @param pathname 当前路由（来自 usePathname）
  * @param postTitles slug → 文章标题 映射（由服务端透传，用于详情页末级回显中文标题）
+ * @param postCategories slug → 所属分类 映射（由服务端透传，用于详情页穿过分类层级）
  */
 export function buildBreadcrumbs(
   pathname: string,
   postTitles: Readonly<Record<string, string>> = {},
+  postCategories: Readonly<Record<string, PostCategory>> = {},
 ): Crumb[] {
   const segments = pathname.split("/").filter(Boolean);
 
   // 首页永远作为面包屑根节点
   const crumbs: Crumb[] = [{ label: "首页", href: "/" }];
+
+  // 文章详情页特殊处理：对齐「项目」面包屑格式（区块 › 分类 › 当前页），
+  // 穿过文章所属分类（首页 › 文章分类 › 分类名 › 标题），而非显示无意义的「文章」占位。
+  if (segments[0] === "posts" && segments.length === 2) {
+    const slug = segments[1];
+    const category = postCategories[slug];
+    if (category) {
+      crumbs.push({ label: CATEGORIES_LABEL, href: CATEGORIES_BASE_PATH });
+      crumbs.push({ label: categoryLabelMap[category], href: categoryHref(category) });
+    }
+    // 末级标题（当前页）不可点击；分类未知时回退为「首页 › 标题」
+    crumbs.push({ label: postTitles[slug] ?? slug });
+    return crumbs;
+  }
 
   let accumulatedPath = "";
   segments.forEach((segment, index) => {
@@ -60,7 +75,6 @@ export function buildBreadcrumbs(
     accumulatedPath += `/${segment}`;
 
     let label = segment;
-    let navigable = true;
 
     if (accumulatedPath in topLevelLabelMap) {
       // 顶层路由（/archive、/categories、/projects、/about）直接复用主导航文案
@@ -71,17 +85,11 @@ export function buildBreadcrumbs(
     } else if (parentSegment === "projects") {
       // 项目子分类：由 projects 数据层回查中文分类名（blog-source/personal/oss）
       label = projectCategoryMap[segment as ProjectCategoryKey]?.label ?? segment;
-    } else if (accumulatedPath in nonNavigableLabelMap) {
-      label = nonNavigableLabelMap[accumulatedPath];
-      navigable = false;
-    } else if (parentSegment === "posts") {
-      // 文章详情末级：把 slug 还原成可读标题，回退到 slug 本身
-      label = postTitles[segment] ?? segment;
     }
 
-    // 末级（当前页）不可点击；不可导航的中间段亦省略 href
+    // 末级（当前页）不可点击；其余中间段链到其累积路径
     const isLast = index === segments.length - 1;
-    crumbs.push({ label, href: isLast || !navigable ? undefined : accumulatedPath });
+    crumbs.push({ label, href: isLast ? undefined : accumulatedPath });
   });
 
   return crumbs;
