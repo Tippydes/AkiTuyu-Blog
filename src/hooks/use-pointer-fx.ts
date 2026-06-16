@@ -8,7 +8,7 @@ export interface PointerFxState {
   enabled: boolean;
   /** 涟漪挂载容器：涟漪以原生 DOM 节点 appendChild 进来（避开 React 重渲染） */
   layerRef: RefObject<HTMLDivElement | null>;
-  /** 自定义指针元素：每帧由 rAF 直接改写 transform（避开 React 重渲染） */
+  /** 自定义指针元素：每次 pointermove 直接改写 transform（避开 React 重渲染） */
   cursorRef: RefObject<HTMLDivElement | null>;
 }
 
@@ -22,12 +22,6 @@ export interface PointerFxState {
 const CURSOR_SIZE = 28; // 自定义指针渲染尺寸（px，对应 h-7 w-7）
 const HOTSPOT_X = (3.18 / 10) * CURSOR_SIZE; // ≈ 8.9px
 const HOTSPOT_Y = (1.76 / 10) * CURSOR_SIZE; // ≈ 4.9px
-
-/*
- * 跟随平滑系数：每帧 current 朝 target 逼近的比例（指数缓动）。
- * 取 0.4 在「几乎跟手」与「轻微顺滑拖尾」间取得平衡；减少动效偏好下置 1（瞬时贴合）。
- */
-const FOLLOW_EASE = 0.4;
 
 /*
  * 移动涟漪节流阈值
@@ -44,10 +38,11 @@ const MOVE_MIN_INTERVAL = 70; // 两枚移动涟漪间至少间隔的毫秒
  * 把「设备探测、指针坐标跟随、涟漪生成与节流、原生指针隐藏」等浏览器副作用收口于此，
  * 表现层叶子（components/ui/cursor-fx.tsx）只提供 DOM 引用并渲染静态骨架。
  *
- * 为什么用 requestAnimationFrame + 命令式 DOM 而非 React state / Framer Motion：
- * 指针移动是高频事件，若每次移动或每枚涟漪都走 setState，会触发海量组件重渲染导致明显卡顿与延迟。
- * 这里改为 rAF 循环直接改写指针 transform、涟漪以原生节点 appendChild 并在 animationend 自移除，
- * 全程零 React 重渲染，既消除跟手延迟又保证移动涟漪稳定出现（§1.5 性能至上的合理取舍）。
+ * 为什么用「命令式直接改写 DOM」而非 React state / Framer Motion / 缓动跟随：
+ * 指针移动是高频事件，若每次移动或每枚涟漪都走 setState 会触发海量重渲染；而任何「平滑缓动」都意味着
+ * 指针每帧只追目标一部分，鼠标越快越拖在后面（即用户感知的「卡 / 跟不上」）。这里指针在每次 pointermove
+ * 里**直接贴到真实坐标**（只写 transform、合成层、无重排，零延迟完全跟手），涟漪以原生节点 appendChild
+ * 并在 animationend 自移除，全程零 React 重渲染（§1.5 性能至上）。
  */
 export function usePointerFx(): PointerFxState {
   const [enabled, setEnabled] = useState(false);
@@ -76,7 +71,7 @@ export function usePointerFx(): PointerFxState {
     };
   }, []);
 
-  // 2) 启用后：rAF 跟随 + 命令式涟漪 + 隐藏原生指针；禁用 / 卸载时彻底还原
+  // 2) 启用后：指针直接跟随 + 命令式涟漪 + 隐藏原生指针；禁用 / 卸载时彻底还原
   useEffect(() => {
     if (!enabled || typeof window === "undefined") return;
     const cursorEl = cursorRef.current;
@@ -87,22 +82,9 @@ export function usePointerFx(): PointerFxState {
     const root = document.documentElement;
     root.classList.add("cursor-fx-active");
 
-    // 目标坐标（真实指针）与当前坐标（缓动后），以及移动涟漪节流游标——均用闭包变量持有，零重渲染
-    const target = { x: 0, y: 0 };
-    const current = { x: 0, y: 0 };
+    // 移动涟漪节流游标——用闭包变量持有，零重渲染
     const lastMove = { x: 0, y: 0, t: 0 };
-    let primed = false; // 是否已收到首个移动事件（用于首帧瞬移到位并淡入）
-    let raf = 0;
-
-    // 每帧让指针朝目标指数逼近，并直接改写 transform（合成层友好、无重排）
-    const tick = () => {
-      const ease = reduceMotion.current ? 1 : FOLLOW_EASE;
-      current.x += (target.x - current.x) * ease;
-      current.y += (target.y - current.y) * ease;
-      cursorEl.style.transform = `translate3d(${current.x}px, ${current.y}px, 0)`;
-      raf = window.requestAnimationFrame(tick);
-    };
-    raf = window.requestAnimationFrame(tick);
+    let primed = false; // 是否已收到首个移动事件（用于首次淡入）
 
     // 生成一枚涟漪：原生节点 appendChild，播放完毕经 animationend 自移除，避免 DOM 堆积
     const spawnRipple = (x: number, y: number, kind: "move" | "click") => {
@@ -121,13 +103,11 @@ export function usePointerFx(): PointerFxState {
     };
 
     const handleMove = (e: PointerEvent) => {
-      target.x = e.clientX - HOTSPOT_X;
-      target.y = e.clientY - HOTSPOT_Y;
-      // 首个移动事件：把当前坐标瞬移到位并淡入，避免从 (0,0) 滑入的突兀拖尾
+      // 直接贴到真实指针位置：仅写 transform（合成层、无重排），零延迟完全跟手
+      cursorEl.style.transform = `translate3d(${e.clientX - HOTSPOT_X}px, ${e.clientY - HOTSPOT_Y}px, 0)`;
+      // 首个移动事件：淡入指针
       if (!primed) {
         primed = true;
-        current.x = target.x;
-        current.y = target.y;
         cursorEl.style.opacity = "1";
       }
 
@@ -161,7 +141,6 @@ export function usePointerFx(): PointerFxState {
     window.addEventListener("blur", hideCursor);
 
     return () => {
-      window.cancelAnimationFrame(raf);
       root.classList.remove("cursor-fx-active");
       window.removeEventListener("pointermove", handleMove);
       window.removeEventListener("pointerdown", handleDown);
