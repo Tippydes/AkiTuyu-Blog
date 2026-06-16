@@ -19,6 +19,7 @@ import ArrowLeft from "./game/arrow-left";
 import ChevronDown from "./game/chevron-down";
 import DarkMode from "./game/dark-mode";
 import LightMode from "./game/light-mode";
+import Cursor from "./game/cursor";
 
 /**
  * Game-Icon-Pack 图标注册表（语义名 → 内联 SVG 组件）
@@ -47,6 +48,7 @@ export const gameIconRegistry = {
   "chevron-down": ChevronDown,
   "dark-mode": DarkMode,
   "light-mode": LightMode,
+  "cursor": Cursor,
 } satisfies Record<string, (props: SVGProps<SVGSVGElement>) => ReactElement>;
 
 /** 已登记的合法图标名联合类型 */

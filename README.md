@@ -76,10 +76,10 @@ src/
 │   ├── projects/         # 项目业务组件：ProjectCard、ProjectList
 │   ├── layout/           # 结构级组件：Sidebar、Header、NavLinks（主导航，含「项目/作品」「文章分类」两组二级菜单）、Breadcrumbs（顶部面包屑）
 │   ├── providers/        # 客户端上下文：ThemeProvider（包裹 next-themes）
-│   └── ui/               # 原子级组件：Badge、Icon、ThemeToggle、Reveal、Avatar（站长头像，next/image）
+│   └── ui/               # 原子级组件：Badge、Icon、ThemeToggle、Reveal、Avatar（站长头像，next/image）、CursorFx（自定义指针+涟漪交互层）
 │       └── icons/        # Game-Icon-Pack 图标系统：index.ts（注册表）+ game/*.tsx（内联 SVG）
 ├── data/                 # 【静态配置层】navigation.ts（导航：href 可选 + 一级二级菜单 + desktopOnly；「文章分类」「项目/作品」二级由 categoryItems / projects 派生，含 CATEGORIES_BASE_PATH/categoryHref，分类子项跳转 /categories/<key>）、projects.ts（项目分类）、site-config.ts（站点+作者信息）
-├── hooks/                # 【状态逻辑层】自定义 React Hooks
+├── hooks/                # 【状态逻辑层】自定义 React Hooks（use-pointer-fx：自定义指针跟随 + 移动/点击涟漪逻辑）
 ├── lib/                  # 【核心服务层】mdx.ts（Markdown 解析 + slug→标题/分类映射）、breadcrumbs.ts（路由→面包屑层级纯函数，文章页穿过所属分类对齐「项目」格式）、motion.ts（动效变体）、utils.ts（cn()）
 └── types/                # 【类型层】blog.ts → 文章数据字典；project.ts → 项目数据字典（ProjectCategory / ProjectItem）
 
@@ -105,19 +105,28 @@ scripts/
 - **结构**：`src/components/ui/icons/game/*.tsx` 每图标一个组件 → `icons/index.ts` 汇总为 `gameIconRegistry`（语义名 → 组件）。
 - **用法**：`<Icon name="home" className="h-5 w-5 text-brand-primary" />`。数据层（`navigation.ts` / `site-config.ts`）只存语义名字符串，与图标实现解耦。
 - **上色**：源 SVG 为单色路径、已剔除 `fill`，组件继承 `currentColor`，故可被任意 MD3 颜色令牌（`text-primary` / `text-surface-onVariant` …）染色；默认尺寸 `h-5 w-5`，可用 `className` 覆盖。
-- **已登记图标**：`home`、`archive`、`user`、`folder`（主导航，`folder` 为「项目 / 作品」一级入口）；`code`、`sparkle`、`daily`、`notes`（文章分类）；`code`、`laptop`、`heart`（项目二级菜单：博客源码 / 个人项目 / 开源贡献）；`rss`、`mail`（社交）；`calendar`、`clock`、`tag`（文章元信息）；`arrow-left`、`chevron-down`、`dark-mode`、`light-mode`（交互，`chevron-down` 为二级菜单展开指示）。
+- **已登记图标**：`home`、`archive`、`user`、`folder`（主导航，`folder` 为「项目 / 作品」一级入口）；`code`、`sparkle`、`daily`、`notes`（文章分类）；`code`、`laptop`、`heart`（项目二级菜单：博客源码 / 个人项目 / 开源贡献）；`rss`、`mail`（社交）；`calendar`、`clock`、`tag`（文章元信息）；`arrow-left`、`chevron-down`、`dark-mode`、`light-mode`（交互，`chevron-down` 为二级菜单展开指示）；`cursor`（自定义鼠标指针，源 `3.Editing Tools/cursor-default.svg`）。
 - **新增 / 替换图标**：从图标包 Releases 下载 SVG，在 `scripts/sync-game-icons.mjs` 的 `ICON_MAP` 里登记「语义名 → `<分类>/<文件>.svg`」，再运行：
   ```bash
   GAME_ICON_SRC=/path/to/Game-Icon-Pack/svg-v1.0.3 node scripts/sync-game-icons.mjs
   ```
   脚本会自动清洗并生成 `game/*.tsx` 与 `index.ts`（均已提交，**请勿手改**）。
 
+## 自定义鼠标指针与涟漪动效
+
+全站把系统原生箭头替换为 Game-Icon-Pack 的 `cursor` 图标，并在鼠标移动 / 点击时绽放涟漪，强化二次元交互气质。
+
+- **结构**：逻辑收口于 `src/hooks/use-pointer-fx.ts`（设备探测、坐标平滑、涟漪节流与生成），表现交给客户端叶子 `src/components/ui/cursor-fx.tsx`（在 `layout.tsx` 内挂载一次）。
+- **指针**：复用注册表里的 `<Icon name="cursor" />`，用 MD3 令牌 `text-brand-primary` 上色，**随亮 / 暗主题自动换色**；经 `framer-motion` 的 `useSpring` 平滑跟随，呈 Mizuki 般的轻微拖尾。箭尖热点已按 viewBox 校正，点击点与视觉箭尖对齐。
+- **涟漪**：移动 = 薰衣草（tertiary）细环、点击 = 樱花粉（secondary）实心晕开，关键帧 `aki-cursor-ripple` 定义在 `globals.css`，颜色一律 `color-mix()` 取自 MD3 令牌。移动涟漪按「距离 + 时间」双重节流，播放完毕经 `onAnimationEnd` 自移除，避免 DOM 堆积。
+- **降级与无障碍**：仅在「精细指针」（`pointer: fine`，鼠标 / 触控板）设备启用并隐藏原生指针（`html.cursor-fx-active` → `cursor: none`）；触屏自动回退系统交互，`prefers-reduced-motion` 下不生成涟漪。整层 `aria-hidden` + `pointer-events-none`，绝不拦截点击。
+
 ## 编码约定（摘要）
 
 - **全中文注释**：核心逻辑 / 解析函数 / 复杂转换需用中文解释「为什么」。
 - **严格语义化 HTML**：`<main>`/`<header>`/`<nav>`/`<aside>`/`<section>`/`<article>`/`<time>`，杜绝 div 汤。
 - **数据-UI 分离**：`page.tsx` 只做取数 + 编排；文章放 `content/`、配置放 `data/`；组件仅靠 props 渲染。
-- **RSC 优先**：`app/` 默认服务端组件，`"use client"` 只下沉到最小交互叶子组件（ThemeToggle、NavLinks、PostList、Reveal）。
+- **RSC 优先**：`app/` 默认服务端组件，`"use client"` 只下沉到最小交互叶子组件（ThemeToggle、NavLinks、PostList、Reveal、CursorFx）。
 - **动态类名**：一律走 `cn()`；MD3 色彩禁止硬编码 hex。
 
 详尽规则与代码黄金范式见 [`AGENTS.md`](./AGENTS.md)。
