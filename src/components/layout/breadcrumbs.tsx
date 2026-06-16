@@ -4,11 +4,14 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Icon from "@/components/ui/icon";
 import { buildBreadcrumbs } from "@/lib/breadcrumbs";
+import type { PostCategory } from "@/types/blog";
 import { cn } from "@/lib/utils";
 
 interface BreadcrumbsProps {
   /** slug → 文章标题 映射，由服务端 Header 透传，供详情页末级回显中文标题 */
   postTitles?: Readonly<Record<string, string>>;
+  /** slug → 所属分类 映射，由服务端 Header 透传，供详情页面包屑穿过分类层级 */
+  postCategories?: Readonly<Record<string, PostCategory>>;
   /** 首页等无层级可展示时的回退文案（如站点标语），避免页眉左侧空荡 */
   fallback?: string;
 }
@@ -25,9 +28,9 @@ const linkCrumbStyles =
  * 服务端组件，仅把 postTitles 这类数据透传进来（§1.6 交互/路由下沉到叶子）。
  * 渲染严格语义化：<nav aria-label> 包 <ol>，每级 <li>，末级标注 aria-current。
  */
-export default function Breadcrumbs({ postTitles, fallback }: BreadcrumbsProps) {
+export default function Breadcrumbs({ postTitles, postCategories, fallback }: BreadcrumbsProps) {
   const pathname = usePathname();
-  const crumbs = buildBreadcrumbs(pathname, postTitles);
+  const crumbs = buildBreadcrumbs(pathname, postTitles, postCategories);
 
   // 仅「首页」一级时不展示面包屑，改用回退文案（站点标语）保持页眉视觉平衡
   if (crumbs.length <= 1) {

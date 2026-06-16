@@ -80,7 +80,7 @@ src/
 │       └── icons/        # Game-Icon-Pack 图标系统：index.ts（注册表）+ game/*.tsx（内联 SVG）
 ├── data/                 # 【静态配置层】navigation.ts（导航：href 可选 + 一级二级菜单 + desktopOnly；「文章分类」「项目/作品」二级由 categoryItems / projects 派生，含 CATEGORIES_BASE_PATH/categoryHref，分类子项跳转 /categories/<key>）、projects.ts（项目分类）、site-config.ts（站点+作者信息）
 ├── hooks/                # 【状态逻辑层】自定义 React Hooks
-├── lib/                  # 【核心服务层】mdx.ts（Markdown 解析 + slug→标题映射）、breadcrumbs.ts（路由→面包屑层级纯函数）、motion.ts（动效变体）、utils.ts（cn()）
+├── lib/                  # 【核心服务层】mdx.ts（Markdown 解析 + slug→标题/分类映射）、breadcrumbs.ts（路由→面包屑层级纯函数，文章页穿过所属分类对齐「项目」格式）、motion.ts（动效变体）、utils.ts（cn()）
 └── types/                # 【类型层】blog.ts → 文章数据字典；project.ts → 项目数据字典（ProjectCategory / ProjectItem）
 
 scripts/
