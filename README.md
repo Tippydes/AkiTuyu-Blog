@@ -79,7 +79,7 @@ src/
 │   └── ui/               # 原子级组件：Badge、Icon、ThemeToggle、Reveal、Avatar（站长头像，next/image）、CursorFx（自定义指针+涟漪交互层）
 │       └── icons/        # Game-Icon-Pack 图标系统：index.ts（注册表）+ game/*.tsx（内联 SVG）
 ├── data/                 # 【静态配置层】navigation.ts（导航：href 可选 + 一级二级菜单 + desktopOnly；「文章分类」「项目/作品」二级由 categoryItems / projects 派生，含 CATEGORIES_BASE_PATH/categoryHref，分类子项跳转 /categories/<key>）、projects.ts（项目分类）、site-config.ts（站点+作者信息）
-├── hooks/                # 【状态逻辑层】自定义 React Hooks（use-pointer-fx：自定义指针跟随 + 移动/点击涟漪逻辑）
+├── hooks/                # 【状态逻辑层】自定义 React Hooks（use-pointer-fx：启用原生箭头指针 + 移动/点击涟漪逻辑）
 ├── lib/                  # 【核心服务层】mdx.ts（Markdown 解析 + slug→标题/分类映射）、breadcrumbs.ts（路由→面包屑层级纯函数，文章页穿过所属分类对齐「项目」格式）、motion.ts（动效变体）、utils.ts（cn()）
 └── types/                # 【类型层】blog.ts → 文章数据字典；project.ts → 项目数据字典（ProjectCategory / ProjectItem）
 
@@ -105,7 +105,7 @@ scripts/
 - **结构**：`src/components/ui/icons/game/*.tsx` 每图标一个组件 → `icons/index.ts` 汇总为 `gameIconRegistry`（语义名 → 组件）。
 - **用法**：`<Icon name="home" className="h-5 w-5 text-brand-primary" />`。数据层（`navigation.ts` / `site-config.ts`）只存语义名字符串，与图标实现解耦。
 - **上色**：源 SVG 为单色路径、已剔除 `fill`，组件继承 `currentColor`，故可被任意 MD3 颜色令牌（`text-primary` / `text-surface-onVariant` …）染色；默认尺寸 `h-5 w-5`，可用 `className` 覆盖。
-- **已登记图标**：`home`、`archive`、`user`、`folder`（主导航，`folder` 为「项目 / 作品」一级入口）；`code`、`sparkle`、`daily`、`notes`（文章分类）；`code`、`laptop`、`heart`（项目二级菜单：博客源码 / 个人项目 / 开源贡献）；`rss`、`mail`（社交）；`calendar`、`clock`、`tag`（文章元信息）；`arrow-left`、`chevron-down`、`dark-mode`、`light-mode`（交互，`chevron-down` 为二级菜单展开指示）；`cursor`（自定义鼠标指针，源 `3.Editing Tools/cursor-default.svg`）。
+- **已登记图标**：`home`、`archive`、`user`、`folder`（主导航，`folder` 为「项目 / 作品」一级入口）；`code`、`sparkle`、`daily`、`notes`（文章分类）；`code`、`laptop`、`heart`（项目二级菜单：博客源码 / 个人项目 / 开源贡献）；`rss`、`mail`（社交）；`calendar`、`clock`、`tag`（文章元信息）；`arrow-left`、`chevron-down`、`dark-mode`、`light-mode`（交互，`chevron-down` 为二级菜单展开指示）。注：自定义鼠标指针**不是**注册表图标，而是 `public/cursors/` 下预上色的独立 SVG 资源（详见下节）。
 - **新增 / 替换图标**：从图标包 Releases 下载 SVG，在 `scripts/sync-game-icons.mjs` 的 `ICON_MAP` 里登记「语义名 → `<分类>/<文件>.svg`」，再运行：
   ```bash
   GAME_ICON_SRC=/path/to/Game-Icon-Pack/svg-v1.0.3 node scripts/sync-game-icons.mjs
@@ -114,13 +114,12 @@ scripts/
 
 ## 自定义鼠标指针与涟漪动效
 
-全站把系统原生箭头替换为 Game-Icon-Pack 的 `cursor` 图标，并在鼠标移动 / 点击时绽放涟漪，强化二次元交互气质。
+全站把系统原生箭头替换为 Game-Icon-Pack 的箭头指针，并在鼠标移动 / 点击时绽放涟漪，强化二次元交互气质。
 
-- **结构**：逻辑收口于 `src/hooks/use-pointer-fx.ts`（设备探测、坐标跟随、涟漪节流与生成），表现交给客户端叶子 `src/components/ui/cursor-fx.tsx`（只渲染静态骨架并把 DOM 引用交给 Hook，在 `layout.tsx` 内挂载一次）。
-- **性能 / 跟手**：指针在每次 `pointermove` 里**直接贴到真实坐标**（只写 transform、合成层、无重排），不做任何缓动——故零延迟、再快也不掉队；涟漪以原生节点 `appendChild` 生成、`animationend` 自移除，全程**零 React 重渲染**（§1.5）。
-- **指针**：复用注册表里的 `<Icon name="cursor" />`，用 MD3 令牌 `text-brand-primary` 上色，**随亮 / 暗主题自动换色**；箭尖热点已按 10×10 viewBox 校正，点击点与视觉箭尖对齐。
-- **涟漪**：移动 = 薰衣草（tertiary）光环（加粗描边 + 淡填充，亮/暗背景皆清晰），点击 = **MD3 primary 蓝 → secondary 樱花粉的径向渐变**（内蓝外粉）晕开；关键帧 `aki-cursor-ripple` 定义在 `globals.css`，颜色全部取自 MD3 令牌。移动涟漪按「距离 + 时间」双重节流，避免 DOM 堆积，性能开销可忽略。
-- **降级与无障碍**：仅在「精细指针」（`pointer: fine`，鼠标 / 触控板）设备启用并隐藏原生指针（`html.cursor-fx-active` → `cursor: none`）；触屏自动回退系统交互，`prefers-reduced-motion` 下不生成涟漪。整层 `aria-hidden` + `pointer-events-none`，绝不拦截点击。
+- **指针为何用原生 `cursor:url()` 而非 DOM 元素跟随**：任何用 DOM 节点模拟的指针都要走「指针事件 → JS → 浏览器合成」管线，至少滞后真实指针约一帧（鼠标越快越明显，即「跟不上」），而原生 CSS 指针由操作系统 / GPU 直接绘制，**零延迟、绝对跟手**。故箭头预生成为亮 / 暗两套上色 SVG（`public/cursors/cursor-light.svg` / `cursor-dark.svg`，源自 `3.Editing Tools/cursor-default.svg`），在 `globals.css` 用 `cursor: url(...) 9 5, auto` 应用，并由 `html.dark.cursor-fx-active` 覆盖切到暗色版，**随主题自动换色**（`9 5` 为箭尖热点，10×10 viewBox 在 28px 渲染下换算，点击点对齐视觉箭尖）。每套填充取对应模式的 `--md-sys-color-primary`（亮 `#0061a4` / 暗 `#9ecaff`）——原生指针图必须烘焙具体色值（§1.8 的例外），**若 primary 令牌变更需同步重生成两套资源**。
+- **结构**：逻辑收口于 `src/hooks/use-pointer-fx.ts`（设备探测、切换原生箭头、涟漪节流与生成），表现交给客户端叶子 `src/components/ui/cursor-fx.tsx`（只渲染涟漪容器骨架并把引用交给 Hook，在 `layout.tsx` 内挂载一次）。
+- **涟漪**：移动 = 薰衣草（tertiary）光环（加粗描边 + 淡填充，亮/暗背景皆清晰），点击 = **MD3 primary 蓝 → secondary 樱花粉的径向渐变**（内蓝外粉）晕开；关键帧 `aki-cursor-ripple` 定义在 `globals.css`，颜色全部取自 MD3 令牌。涟漪以原生节点 `appendChild` 生成、`animationend` 自移除，全程**零 React 重渲染**；移动涟漪按「距离 + 时间」双重节流，避免 DOM 堆积，性能开销可忽略（§1.5）。
+- **降级与无障碍**：仅在「精细指针」（`pointer: fine`，鼠标 / 触控板）设备启用原生箭头（`html.cursor-fx-active`）；触屏自动回退系统交互，`prefers-reduced-motion` 下不生成涟漪。整层 `aria-hidden` + `pointer-events-none`，绝不拦截点击。
 
 ## 编码约定（摘要）
 

@@ -185,14 +185,21 @@
 }
 
 /*
- * 启用自定义指针时隐藏系统原生指针
- * 仅在「精细指针」设备生效（叶子组件确认后给 <html> 加 .cursor-fx-active），
- * 避免影响触屏 / 键盘用户；!important 用于压过链接 / 按钮自带的 cursor:pointer。
+ * 自定义指针（方案 B）：用预生成的 Game-Icon 箭头作为原生 cursor:url()，由操作系统 / GPU 直接绘制，
+ * 故零延迟、绝对跟手（DOM 模拟指针做不到，因为要走「事件→JS→合成」管线、至少滞后约一帧）。
+ * 仅「精细指针」设备生效（叶子组件确认后给 <html> 加 .cursor-fx-active），避免影响触屏 / 键盘用户；
+ * !important 用于压过链接 / 按钮自带的 cursor:pointer。
+ * 亮 / 暗主题各用一套箭头（颜色对应各模式的 MD3 primary，见 public/cursors/cursor-{light,dark}.svg），
+ * 随 next-themes 的 .dark 类切换；`9 5` 为箭尖热点（10×10 viewBox 在 28px 渲染下换算），保证点击点与视觉箭尖对齐。
  */
 @media (pointer: fine) {
   html.cursor-fx-active,
   html.cursor-fx-active * {
-    cursor: none !important;
+    cursor: url("/cursors/cursor-light.svg") 9 5, auto !important;
+  }
+  html.dark.cursor-fx-active,
+  html.dark.cursor-fx-active * {
+    cursor: url("/cursors/cursor-dark.svg") 9 5, auto !important;
   }
 }
 

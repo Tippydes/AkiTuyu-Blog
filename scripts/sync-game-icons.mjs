@@ -59,8 +59,6 @@ const ICON_MAP = {
   "chevron-down": "4.Shapes & Symbol/arrow-down.svg",
   "dark-mode": "1.UI/dark-mode.svg",
   "light-mode": "1.UI/light-mode.svg",
-  // 自定义鼠标指针（替换原生箭头，由 components/ui/cursor-fx.tsx 跟随渲染）
-  cursor: "3.Editing Tools/cursor-default.svg",
 };
 
 /** kebab/小写语义名 → PascalCase 组件名（如 arrow-left → ArrowLeft） */
