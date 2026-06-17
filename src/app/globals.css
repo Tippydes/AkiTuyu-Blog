@@ -189,17 +189,21 @@
  * 故零延迟、绝对跟手（DOM 模拟指针做不到，因为要走「事件→JS→合成」管线、至少滞后约一帧）。
  * 仅「精细指针」设备生效（叶子组件确认后给 <html> 加 .cursor-fx-active），避免影响触屏 / 键盘用户；
  * !important 用于压过链接 / 按钮自带的 cursor:pointer。
- * 亮 / 暗主题各用一套箭头（颜色对应各模式的 MD3 primary，见 public/cursors/cursor-{light,dark}.svg），
- * 随 next-themes 的 .dark 类切换；`9 5` 为箭尖热点（10×10 viewBox 在 28px 渲染下换算），保证点击点与视觉箭尖对齐。
+ * 亮 / 暗主题各用一套箭头（颜色对应各模式的 MD3 primary），随 next-themes 的 .dark 类切换；
+ * `9 5` 为箭尖热点（10×10 viewBox 在 28px 渲染下换算），保证点击点与视觉箭尖对齐。
+ *
+ * 为什么用 PNG 而非 SVG 作光标：Chrome 对 SVG 光标支持有缺陷（常渲染成空、指针「凭空消失」），
+ * 而 PNG 光标在 Chrome / Firefox / Safari 全部稳定可见。故 public/cursors/cursor-{light,dark}.svg
+ * 仅作可编辑母版，实际光标用由其导出的同名 .png（导出命令见 README / AGENTS.md）。
  */
 @media (pointer: fine) {
   html.cursor-fx-active,
   html.cursor-fx-active * {
-    cursor: url("/cursors/cursor-light.svg") 9 5, auto !important;
+    cursor: url("/cursors/cursor-light.png") 9 5, auto !important;
   }
   html.dark.cursor-fx-active,
   html.dark.cursor-fx-active * {
-    cursor: url("/cursors/cursor-dark.svg") 9 5, auto !important;
+    cursor: url("/cursors/cursor-dark.png") 9 5, auto !important;
   }
 }
 
