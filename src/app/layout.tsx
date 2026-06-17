@@ -5,6 +5,7 @@ import "./globals.css";
 import Sidebar from "@/components/layout/sidebar";
 import Header from "@/components/layout/header";
 import ThemeProvider from "@/components/providers/theme-provider";
+import CursorFx from "@/components/ui/cursor-fx";
 import { siteConfig } from "@/data/site-config";
 
 // 现代化无衬线变量字体，挂载到 --font-sans 供 Tailwind 排版消费
@@ -47,6 +48,9 @@ export default function RootLayout({ children }: RootLayoutProps) {
     >
       <body className={bodyStyles}>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+          {/* 自定义鼠标指针 + 移动 / 点击涟漪交互层（仅桌面精细指针启用，触屏自动回退） */}
+          <CursorFx />
+
           {/* 沉浸式背景光晕：固定铺满视口、置于内容之下，随主题自适应换色 */}
           <div
             className="aki-immersive-bg pointer-events-none fixed inset-0 -z-10"
