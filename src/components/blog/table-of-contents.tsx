@@ -61,7 +61,7 @@ export default function TableOfContents({
       <AnimatePresence>
         {visible && (
           <motion.aside
-            className="glass-panel fixed right-6 top-24 z-30 hidden w-64 max-h-[calc(100vh-8rem)] overflow-y-auto rounded-3xl p-5 md:block"
+            className="glass-panel fixed right-18 top-24 z-30 hidden w-64 max-h-[calc(100vh-8rem)] overflow-y-auto rounded-3xl p-5 md:block"
             aria-label="文章目录"
             variants={tocPanelVariants}
             initial="hidden"
@@ -124,7 +124,7 @@ export default function TableOfContents({
             type="button"
             onClick={onToggle}
             aria-label="展开目录"
-            className="glass-panel fixed bottom-8 right-8 z-30 hidden h-12 w-12 items-center justify-center rounded-full text-surface-onVariant shadow-glass transition-colors hover:text-brand-primary md:flex"
+            className="glass-panel fixed bottom-8 right-16 z-30 hidden h-12 w-12 items-center justify-center rounded-full text-surface-onVariant shadow-glass transition-colors hover:text-brand-primary md:flex"
             variants={fabVariants}
             initial="hidden"
             animate="visible"
