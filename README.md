@@ -95,7 +95,7 @@ scripts/
 - `tailwind.config.ts` 将这些变量映射为嵌套色彩令牌，从而生成 `bg-surface`、`text-surface-onVariant`、`bg-secondary-container`、`bg-tertiary-container` 等贴合设计语义的工具类。
 - 暗黑模式采用 **`darkMode: 'class'`** + `next-themes`：在根节点挂载 `.dark` 类即可整站换肤；`body` 上的 `transition-colors` 让切换过程平滑无闪烁。
 - 复用型毛玻璃面板统一封装为 `.glass-panel`；首页四角的樱花 / 天空光晕用 `.aki-immersive-bg`（基于 `color-mix()` 取自 MD3 容器令牌，随主题自适应换色）。
-- 右侧立绘背景用 `.aki-side-art`：以 `public/images/Alona_bg.jpg` 为满幅装饰，固定铺满视口右半区、贴右下对齐，左侧用 `mask-image` 柔和淡出以保证正文可读；仅桌面端（`md` 及以上）显示，移动端隐藏，亮 / 暗模式分别用不同透明度适配。要换立绘只需替换该图片或改 `.aki-side-art` 里的路径。
+- 右侧立绘背景用 `.aki-side-art`（**焦点配置系统**）：图片路径、`background-position`（焦点）、`background-size`、容器宽度和暗色遮罩模式全部由 `data/site-config.ts` 的 `heroBackground` 字段驱动，通过 CSS 自定义属性注入——换图只需改配置，无需动 CSS 或组件代码。亮色模式无遮罩（全图通透展示），暗色模式可选 `vignette`（四周暗角）/ `gradient-left`（左侧渐隐）/ `bottom-fade`（底部渐隐）/ `none`。仅桌面端显示，亮 / 暗分别用不同透明度适配。
 - 文章正文用自维护的 `.prose-aki` 组件层排版，颜色严格绑定 MD3 令牌，未引入额外排版插件。
 
 ## 图标系统（Game-Icon-Pack，零 npm 图标依赖）

@@ -55,9 +55,14 @@ export default function RootLayout({ children }: RootLayoutProps) {
             aria-hidden="true"
           />
 
-          {/* 右侧立绘背景：固定铺满视口右半区，置于内容之下；仅桌面端显示，移动端不渲染 */}
+          {/* 右侧立绘背景——焦点配置系统：图片/焦点/尺寸/遮罩均从数据层驱动，换图仅改配置 */}
           <div
-            className="aki-side-art pointer-events-none fixed inset-y-0 right-0 -z-10 hidden w-5/6 select-none opacity-80 md:block dark:opacity-50"
+            className={`aki-side-art aki-side-art--${siteConfig.heroBackground.darkMask} pointer-events-none fixed inset-y-0 right-0 -z-10 hidden ${siteConfig.heroBackground.width} select-none opacity-80 md:block dark:opacity-50`}
+            style={{
+              "--aki-side-art-src": `url("${siteConfig.heroBackground.src}")`,
+              "--aki-side-art-position": siteConfig.heroBackground.position,
+              "--aki-side-art-size": siteConfig.heroBackground.size,
+            } as React.CSSProperties}
             aria-hidden="true"
           />
 
