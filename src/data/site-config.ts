@@ -27,6 +27,31 @@ export interface SocialLink {
   icon: string;
 }
 
+/**
+ * 右侧立绘背景配置
+ *
+ * 为什么抽到数据层：后续换图只需改此配置的焦点 / 宽度 / 遮罩模式，
+ * 无需动 CSS 或组件代码，完全符合「数据-UI 分离」原则。
+ */
+export interface HeroBackground {
+  /** 图片路径（位于 public/） */
+  src: string;
+  /** CSS background-position，控制人物焦点区域 */
+  position: string;
+  /** CSS background-size */
+  size: string;
+  /** Tailwind 宽度类（如 "w-full" / "w-5/6"） */
+  width: string;
+  /**
+   * 暗色模式遮罩模式
+   * - "none"：亮/暗均无遮罩
+   * - "vignette"：暗色模式四周暗角
+   * - "gradient-left"：暗色模式左侧渐隐
+   * - "bottom-fade"：暗色模式底部渐隐
+   */
+  darkMask: "none" | "vignette" | "gradient-left" | "bottom-fade";
+}
+
 export const siteConfig = {
   name: "AkiTuyu",
   /** 站点标语 */
@@ -54,6 +79,17 @@ export const siteConfig = {
     { label: "RSS", href: "/rss.xml", icon: "rss" },
     { label: "邮箱", href: "kafuchino142857@gmail.com", icon: "mail" },
   ] satisfies readonly SocialLink[],
+  /**
+   * 右侧立绘背景——换图时只需修改此处配置
+   * position 控制人物焦点，避免关键部位被裁切
+   */
+  heroBackground: {
+    src: "/images/Alona_bg.jpg",
+    position: "center center",
+    size: "cover",
+    width: "w-full",
+    darkMask: "vignette",
+  } satisfies HeroBackground,
 } as const;
 
 export type SiteConfig = typeof siteConfig;

@@ -114,18 +114,42 @@
   }
 
   /*
-   * 右侧立绘装饰：铺满视口右半区、贴右下对齐以保证人物完整露出。
-   * 为什么用 background-image 而非 <Image>：这是纯装饰性满幅背景，需要 cover 裁切 +
-   * 遮罩淡出 + 定位控制，CSS 背景比组件更直接；图片路径固定，不违反「禁内联 style」。
-   * mask-image 让画面自左侧柔和淡出，避免压住居中正文、保证可读性。
+   * 右侧立绘装饰——焦点配置系统（Aki Side Art）
+   *
+   * 为什么用 CSS 自定义属性：图片路径、焦点(position)、尺寸(size) 全部由 layout.tsx
+   * 从 site-config.ts 注入为 inline style 变量（属于「JS 动态计算」的合法例外），
+   * 这样换图只需改数据层，无需动 CSS。
+   *
+   * 遮罩策略：亮色模式不设任何遮罩（全图通透展示），暗色模式通过 .dark 选择器
+   * 应用 vignette（四周暗角）以融合夜间氛围。遮罩模式也由 CSS class 控制，
+   * layout.tsx 根据配置的 darkMask 字段追加对应修饰类。
    */
   .aki-side-art {
-    background-image: url("/images/Alona_bg.jpg");
+    background-image: var(--aki-side-art-src);
     background-repeat: no-repeat;
-    background-position: right bottom;
-    background-size: cover;
+    background-position: var(--aki-side-art-position, center center);
+    background-size: var(--aki-side-art-size, cover);
+  }
+
+  /*
+   * 暗色模式遮罩预设：vignette（四周暗角）
+   * 为什么只在 .dark 下生效：亮色模式用户期望无遮罩的通透感，暗色时暗角可加强沉浸氛围。
+   */
+  .dark .aki-side-art--vignette {
+    -webkit-mask-image: radial-gradient(ellipse 80% 80% at center, #000 40%, transparent 100%);
+    mask-image: radial-gradient(ellipse 80% 80% at center, #000 40%, transparent 100%);
+  }
+
+  /* 暗色模式遮罩预设：gradient-left（左侧渐隐，兼容旧配置） */
+  .dark .aki-side-art--gradient-left {
     -webkit-mask-image: linear-gradient(to left, #000 48%, transparent 96%);
     mask-image: linear-gradient(to left, #000 48%, transparent 96%);
+  }
+
+  /* 暗色模式遮罩预设：bottom-fade（底部渐隐） */
+  .dark .aki-side-art--bottom-fade {
+    -webkit-mask-image: linear-gradient(to bottom, #000 60%, transparent 100%);
+    mask-image: linear-gradient(to bottom, #000 60%, transparent 100%);
   }
 }
 
