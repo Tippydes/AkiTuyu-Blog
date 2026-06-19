@@ -3,6 +3,7 @@ import Link from "next/link";
 import { siteConfig } from "@/data/site-config";
 import { getPostTitleMap, getPostCategoryMap } from "@/lib/mdx";
 import Breadcrumbs from "@/components/layout/breadcrumbs";
+import HeaderEntrance from "@/components/layout/header-entrance";
 import ThemeToggle from "@/components/ui/theme-toggle";
 import Avatar from "@/components/ui/avatar";
 
@@ -24,7 +25,7 @@ export default function Header() {
   const postCategories = getPostCategoryMap();
 
   return (
-    <header className={headerStyles}>
+    <HeaderEntrance className={headerStyles}>
       {/* 移动端展示品牌入口，避免与侧边栏品牌区重复 */}
       <Link href="/" className="flex shrink-0 items-center gap-x-2 md:hidden">
         <Avatar
@@ -52,6 +53,6 @@ export default function Header() {
       <section className="flex shrink-0 items-center gap-x-3" aria-label="全局操作">
         <ThemeToggle />
       </section>
-    </header>
+    </HeaderEntrance>
   );
 }
