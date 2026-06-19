@@ -20,6 +20,7 @@ interface LayoutShellProps {
  * 仅读 usePathname 驱动 Framer Motion 做布局过渡，不渲染任何业务 UI（§1.6）。
  *
  * 桌面端：检测到 /posts/ 路由时，侧边栏向左平移隐藏，主内容占满视口宽度。
+ * 首次进入页面时侧边栏也会从左侧丝滑滑入，与从文章页返回时的动画一致。
  * 移动端：底部导航栏同样隐藏（文章页给予沉浸阅读体验）。
  */
 export default function LayoutShell({ sidebar, children }: LayoutShellProps) {
@@ -51,7 +52,7 @@ export default function LayoutShell({ sidebar, children }: LayoutShellProps) {
           "hidden md:block",
           isPostPage ? "fixed left-0 top-0 z-40 h-screen w-72" : "relative",
         )}
-        initial={false}
+        initial="hidden"
         animate={isPostPage ? "hidden" : "visible"}
         variants={sidebarVariants}
       >
@@ -63,7 +64,8 @@ export default function LayoutShell({ sidebar, children }: LayoutShellProps) {
         {!isPostPage && (
           <motion.div
             className="md:hidden"
-            initial={{ y: 0, opacity: 1 }}
+            initial={{ y: "100%", opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
             exit={{ y: "100%", opacity: 0 }}
             transition={{ type: "spring" as const, stiffness: 300, damping: 30 }}
           >
