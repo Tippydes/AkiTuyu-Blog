@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { getPostBySlug, getPostSlugs } from "@/lib/mdx";
 import PostMeta from "@/components/blog/post-meta";
 import PostBody from "@/components/blog/post-body";
+import PostArticleLayout from "@/components/blog/post-article-layout";
 import Badge from "@/components/ui/badge";
 import Reveal from "@/components/ui/reveal";
 import Icon from "@/components/ui/icon";
@@ -36,7 +37,9 @@ export async function generateMetadata({
  * 文章详情页（服务端组件控制器）
  *
  * 从内容服务层按 slug 取数；找不到即触发 404。页面只负责编排
- * 「返回入口 + 文章头部 + 正文」三块，正文渲染交给纯展示组件 PostBody。
+ * 「返回入口 + 文章头部 + 正文 + 浮动目录」四块。
+ * PostArticleLayout 客户端叶子管理目录展开/收起与文章水平位移动画；
+ * 正文渲染交给纯展示组件 PostBody。
  */
 export default async function PostPage({ params }: PostPageProps) {
   const { slug } = await params;
@@ -44,47 +47,49 @@ export default async function PostPage({ params }: PostPageProps) {
   if (!post) notFound();
 
   return (
-    <Reveal>
-      <article className="glass-panel mx-auto max-w-3xl rounded-4xl p-6 md:p-10">
-        {/* 返回首页入口 */}
-        <Link
-          href="/"
-          className="inline-flex items-center gap-x-1.5 text-sm font-medium text-surface-onVariant transition-colors hover:text-brand-primary"
-        >
-          <Icon name="arrow-left" className="h-4 w-4" aria-hidden="true" />
-          返回首页
-        </Link>
+    <PostArticleLayout headings={post.headings}>
+      <Reveal>
+        <article className="glass-panel mx-auto max-w-3xl rounded-4xl p-6 md:p-10">
+          {/* 返回首页入口 */}
+          <Link
+            href="/"
+            className="inline-flex items-center gap-x-1.5 text-sm font-medium text-surface-onVariant transition-colors hover:text-brand-primary"
+          >
+            <Icon name="arrow-left" className="h-4 w-4" aria-hidden="true" />
+            返回首页
+          </Link>
 
-        {/* 文章头部：元信息 + 标题 + 摘要 + 标签 */}
-        <header className="mt-6 border-b border-outline-variant/30 pb-6">
-          <PostMeta
-            date={post.date}
-            formattedDate={post.formattedDate}
-            readingMinutes={post.readingMinutes}
-            category={post.category}
-          />
-          <h1 className="mt-4 text-3xl font-bold tracking-tight text-surface-onSurface md:text-4xl">
-            {post.title}
-          </h1>
-          <p className="mt-3 text-base leading-7 text-surface-onVariant">
-            {post.excerpt}
-          </p>
-          {post.tags.length > 0 && (
-            <ul className="mt-4 flex flex-wrap gap-2">
-              {post.tags.map((tag) => (
-                <li key={tag}>
-                  <Badge variant="tag">#{tag}</Badge>
-                </li>
-              ))}
-            </ul>
-          )}
-        </header>
+          {/* 文章头部：元信息 + 标题 + 摘要 + 标签 */}
+          <header className="mt-6 border-b border-outline-variant/30 pb-6">
+            <PostMeta
+              date={post.date}
+              formattedDate={post.formattedDate}
+              readingMinutes={post.readingMinutes}
+              category={post.category}
+            />
+            <h1 className="mt-4 text-3xl font-bold tracking-tight text-surface-onSurface md:text-4xl">
+              {post.title}
+            </h1>
+            <p className="mt-3 text-base leading-7 text-surface-onVariant">
+              {post.excerpt}
+            </p>
+            {post.tags.length > 0 && (
+              <ul className="mt-4 flex flex-wrap gap-2">
+                {post.tags.map((tag) => (
+                  <li key={tag}>
+                    <Badge variant="tag">#{tag}</Badge>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </header>
 
-        {/* 正文 */}
-        <div className="mt-8">
-          <PostBody html={post.contentHtml} />
-        </div>
-      </article>
-    </Reveal>
+          {/* 正文 */}
+          <section className="mt-8">
+            <PostBody html={post.contentHtml} />
+          </section>
+        </article>
+      </Reveal>
+    </PostArticleLayout>
   );
 }

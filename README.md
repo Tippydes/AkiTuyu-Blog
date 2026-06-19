@@ -13,7 +13,7 @@
 | 样式 | Tailwind CSS **v4**（MD3 色彩令牌 + 毛玻璃工具类 + `.prose-aki` 正文排版） |
 | 内容 | 本地 Markdown（`content/posts/*.md`），由 `gray-matter` 解析 Frontmatter、`marked` 渲染正文 |
 | 主题 | `next-themes`（`class` 策略的亮 / 暗切换） |
-| 动效 | `framer-motion`（卡片交错入场、上浮淡入） |
+| 动效 | `framer-motion`（卡片交错入场、上浮淡入、文章页侧边栏隐藏 + TOC 展开/收起动画） |
 | 图标 | [Game-Icon-Pack](https://github.com/Nieobie/Game-Icon-Pack)—全圆角风格，以原生内联 SVG 组件形式收编（**零 npm 图标依赖**，经 `components/ui/icon.tsx` 按名取用） |
 | 类名合并 | `clsx` + `tailwind-merge`（封装为 `cn()`） |
 | 字体 | `next/font/google` — Inter（变量字体） |
@@ -72,16 +72,16 @@ src/
 │   ├── projects/         # 项目 / 作品总览 + [category]/ 三个分类子页（SSG：blog-source/personal/oss）
 │   └── about/            # 关于：作者简介 + 社交外链
 ├── components/           # 【表现层】纯展示 UI 组件（仅靠 props 渲染）
-│   ├── blog/             # 博客业务组件：PostCard、PostList、PostMeta、PostBody、SiteHero
+│   ├── blog/             # 博客业务组件：PostCard、PostList、PostMeta、PostBody、SiteHero、PostArticleLayout（目录状态+文章偏移）、TableOfContents（浮动目录卡片）
 │   ├── projects/         # 项目业务组件：ProjectCard、ProjectList
-│   ├── layout/           # 结构级组件：Sidebar、Header、NavLinks（主导航，含「项目/作品」「文章分类」两组二级菜单）、Breadcrumbs（顶部面包屑）
+│   ├── layout/           # 结构级组件：Sidebar、Header、NavLinks、Breadcrumbs、LayoutShell（文章页侧边栏隐藏动画壳）
 │   ├── providers/        # 客户端上下文：ThemeProvider（包裹 next-themes）
 │   └── ui/               # 原子级组件：Badge、Icon、ThemeToggle、Reveal、Avatar（站长头像，next/image）
 │       └── icons/        # Game-Icon-Pack 图标系统：index.ts（注册表）+ game/*.tsx（内联 SVG）
 ├── data/                 # 【静态配置层】navigation.ts（导航：href 可选 + 一级二级菜单 + desktopOnly；「文章分类」「项目/作品」二级由 categoryItems / projects 派生，含 CATEGORIES_BASE_PATH/categoryHref，分类子项跳转 /categories/<key>）、projects.ts（项目分类）、site-config.ts（站点+作者信息）
 ├── hooks/                # 【状态逻辑层】自定义 React Hooks
-├── lib/                  # 【核心服务层】mdx.ts（Markdown 解析 + slug→标题/分类映射）、breadcrumbs.ts（路由→面包屑层级纯函数，文章页穿过所属分类对齐「项目」格式）、motion.ts（动效变体）、utils.ts（cn()）
-└── types/                # 【类型层】blog.ts → 文章数据字典；project.ts → 项目数据字典（ProjectCategory / ProjectItem）
+├── lib/                  # 【核心服务层】mdx.ts（Markdown 解析 + slug→标题/分类映射 + 标题提取与键入供 TOC）、breadcrumbs.ts、motion.ts、utils.ts
+└── types/                # 【类型层】blog.ts → 文章数据字典（含 TocHeading）；project.ts → 项目数据字典
 
 scripts/
 └── sync-game-icons.mjs   # 【开发工具】零依赖：清洗选定 Game-Icon-Pack SVG → 内联组件 + 注册表
@@ -117,7 +117,7 @@ scripts/
 - **全中文注释**：核心逻辑 / 解析函数 / 复杂转换需用中文解释「为什么」。
 - **严格语义化 HTML**：`<main>`/`<header>`/`<nav>`/`<aside>`/`<section>`/`<article>`/`<time>`，杜绝 div 汤。
 - **数据-UI 分离**：`page.tsx` 只做取数 + 编排；文章放 `content/`、配置放 `data/`；组件仅靠 props 渲染。
-- **RSC 优先**：`app/` 默认服务端组件，`"use client"` 只下沉到最小交互叶子组件（ThemeToggle、NavLinks、PostList、Reveal）。
+- **RSC 优先**：`app/` 默认服务端组件，`"use client"` 只下沉到最小交互叶子组件（ThemeToggle、NavLinks、PostList、Reveal、LayoutShell、PostArticleLayout、TableOfContents）。
 - **动态类名**：一律走 `cn()`；MD3 色彩禁止硬编码 hex。
 
 详尽规则与代码黄金范式见 [`AGENTS.md`](./AGENTS.md)。

@@ -57,3 +57,18 @@ export interface PostArchiveGroup {
   /** 该年份下按时间倒序排列的文章 */
   posts: readonly PostSummary[];
 }
+
+/**
+ * 文章目录标题条目
+ *
+ * 从文章正文 HTML 中提取的标题（h2/h3），供浮动目录卡片渲染层级列表。
+ * id 对应正文中 heading 标签的锚点，实现点击跳转定位。
+ */
+export interface TocHeading {
+  /** 标题层级（2 = h2, 3 = h3） */
+  level: number;
+  /** 标题纯文本内容 */
+  text: string;
+  /** 用于锚点跳转的 ID（由标题文本 slugify 得来） */
+  id: string;
+}
