@@ -14,10 +14,10 @@ interface TableOfContentsProps {
   onToggle: () => void;
 }
 
-// Framer Motion 变体：目录卡片从左侧滑入/滑出（§1.7 外提）
+// Framer Motion 变体：目录卡片从右侧滑入/滑出（§1.7 外提）
 const tocPanelVariants = {
   hidden: {
-    x: "-110%",
+    x: "110%",
     opacity: 0,
     transition: { type: "spring" as const, stiffness: 300, damping: 30 },
   },
@@ -41,8 +41,8 @@ const fabVariants = {
  * 需要 Framer Motion 动画与 DOM 事件监听，按 §1.6 下沉为最小叶子组件。
  *
  * 两种形态：
- * 1. 展开态：左侧浮动毛玻璃卡片，渲染标题列表，顶部含「收起」按钮；
- * 2. 收起态：左下角圆形 FAB，点击唤回目录。
+ * 1. 展开态：右侧浮动毛玻璃卡片，渲染标题列表，顶部含「收起」按钮；
+ * 2. 收起态：右下角圆形 FAB，点击唤回目录。
  */
 export default function TableOfContents({
   headings,
@@ -61,7 +61,7 @@ export default function TableOfContents({
       <AnimatePresence>
         {visible && (
           <motion.aside
-            className="glass-panel fixed left-6 top-24 z-30 hidden w-64 max-h-[calc(100vh-8rem)] overflow-y-auto rounded-3xl p-5 md:block"
+            className="glass-panel fixed right-6 top-24 z-30 hidden w-64 max-h-[calc(100vh-8rem)] overflow-y-auto rounded-3xl p-5 md:block"
             aria-label="文章目录"
             variants={tocPanelVariants}
             initial="hidden"
@@ -117,14 +117,14 @@ export default function TableOfContents({
         )}
       </AnimatePresence>
 
-      {/* 收起态：左下角 FAB 唤回按钮 */}
+      {/* 收起态：右下角 FAB 唤回按钮 */}
       <AnimatePresence>
         {!visible && (
           <motion.button
             type="button"
             onClick={onToggle}
             aria-label="展开目录"
-            className="glass-panel fixed bottom-8 left-8 z-30 hidden h-12 w-12 items-center justify-center rounded-full text-surface-onVariant shadow-glass transition-colors hover:text-brand-primary md:flex"
+            className="glass-panel fixed bottom-8 right-8 z-30 hidden h-12 w-12 items-center justify-center rounded-full text-surface-onVariant shadow-glass transition-colors hover:text-brand-primary md:flex"
             variants={fabVariants}
             initial="hidden"
             animate="visible"
