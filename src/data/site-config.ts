@@ -88,7 +88,7 @@ export const siteConfig = {
     position: "center center",
     size: "cover",
     width: "w-full",
-    darkMask: "vignette",
+    darkMask: "gradient-left",
   } satisfies HeroBackground,
 } as const;
 
