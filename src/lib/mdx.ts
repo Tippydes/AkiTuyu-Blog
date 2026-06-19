@@ -8,6 +8,7 @@ import type {
   PostCategory,
   PostFrontmatter,
   PostSummary,
+  TocHeading,
 } from "@/types/blog";
 
 /**
@@ -146,10 +147,62 @@ export function getPostCategoryMap(): Record<string, PostCategory> {
 }
 
 /**
- * 按 slug 获取单篇完整文章（含编译后的正文 HTML）
+ * 将标题文本转为 URL 安全的锚点 ID
+ *
+ * 为什么自己实现：这是一个纯字符串操作，无需引入 slugify 库（§1.5 原生优先）。
+ * 支持中英文混合标题，保留中文字符并把空格/特殊符号替换为连字符。
+ */
+function slugifyHeading(text: string): string {
+  return text
+    .trim()
+    .toLowerCase()
+    .replace(/[^\p{L}\p{N}\s-]/gu, "")
+    .replace(/[\s]+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
+/**
+ * 从已编译的 HTML 中提取 h2/h3 标题，生成目录数据
+ *
+ * 为什么只取 h2/h3：文章详情页 h1 已被页面标题占用，目录关注正文结构层级即可。
+ * 使用正则匹配而非 DOM 解析：服务端无 DOM 环境，且 marked 输出结构稳定可预测。
+ */
+export function extractHeadings(html: string): TocHeading[] {
+  const headingRegex = /<h([23])([^>]*)>(.*?)<\/h[23]>/gi;
+  const headings: TocHeading[] = [];
+  let match: RegExpExecArray | null;
+
+  while ((match = headingRegex.exec(html)) !== null) {
+    const level = Number(match[1]);
+    // 剥离 HTML 标签以提取纯文本（如 <code> 包裹的内联代码）
+    const text = match[3].replace(/<[^>]*>/g, "");
+    const id = slugifyHeading(text);
+    headings.push({ level, text, id });
+  }
+
+  return headings;
+}
+
+/**
+ * 为正文 HTML 中的 h2/h3 标签注入对应的 id 属性
+ *
+ * 为什么在服务端完成：目录卡片的锚点跳转依赖标题标签上的 id；在数据层统一注入
+ * 比客户端运行时 DOM 操作更可靠，也保证 SSR 阶段就能正确渲染可跳转标题。
+ */
+function injectHeadingIds(html: string): string {
+  return html.replace(/<h([23])([^>]*)>(.*?)<\/h[23]>/gi, (_full, level, attrs, content) => {
+    const text = content.replace(/<[^>]*>/g, "");
+    const id = slugifyHeading(text);
+    return `<h${level}${attrs} id="${id}">${content}</h${level}>`;
+  });
+}
+
+/**
+ * 按 slug 获取单篇完整文章（含编译后的正文 HTML + 目录标题）
  * 仅文章详情页调用，找不到时返回 null 交由页面触发 notFound()。
  */
-export async function getPostBySlug(slug: string): Promise<Post | null> {
+export async function getPostBySlug(slug: string): Promise<(Post & { headings: TocHeading[] }) | null> {
   const fileName = listPostFiles().find(
     (name) => name.replace(/\.mdx?$/, "") === slug,
   );
@@ -157,11 +210,15 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
 
   const file = readPostFile(fileName);
   // marked 在无异步扩展时同步返回，这里显式 await 兼容其联合返回类型
-  const contentHtml = await marked.parse(file.content, { async: false });
+  const rawHtml = await marked.parse(file.content, { async: false });
+  // 注入锚点 ID 以支持目录点击跳转
+  const contentHtml = injectHeadingIds(rawHtml);
+  const headings = extractHeadings(rawHtml);
 
   return {
     ...toSummary(file),
     contentHtml,
+    headings,
   };
 }
 

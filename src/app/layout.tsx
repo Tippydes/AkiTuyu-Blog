@@ -4,6 +4,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Sidebar from "@/components/layout/sidebar";
 import Header from "@/components/layout/header";
+import LayoutShell from "@/components/layout/layout-shell";
 import ThemeProvider from "@/components/providers/theme-provider";
 import { siteConfig } from "@/data/site-config";
 
@@ -27,16 +28,17 @@ interface RootLayoutProps {
  * 全局根布局（服务端组件 RSC）
  *
  * 核心职责：注入语言环境与全局字体、编排多端语义化骨架，本身不堆砌任何业务样式。
- * 结构由 <aside>（侧边栏）+ <header>（页眉）+ <main>（核心视图）+ <footer> 拼装，
+ * 结构由 LayoutShell（客户端布局动画壳）包裹 <aside>（侧边栏）+ 主内容区拼装，
  * 具体 UI 全部下沉到 components/ 内的独立组件，符合「数据-UI 分离」与组件边界流。
- * ThemeProvider 是唯一的客户端包裹层，负责 next-themes 的 .dark 类注入；
+ *
+ * LayoutShell 是唯一涉及路由感知动画的客户端叶子：文章详情页时将侧边栏向左丝滑隐藏，
+ * 让主内容区占满全宽，营造沉浸阅读体验。ThemeProvider 负责 next-themes 的 .dark 类注入；
  * suppressHydrationWarning 规避 SSR / CSR 主题类名不一致的告警。
  */
 export default function RootLayout({ children }: RootLayoutProps) {
   // 多端自适应骨架类名按 §1.3 规范抽离至 JSX 外
   const bodyStyles =
     "flex min-h-screen w-full flex-col bg-background font-sans text-surface-onSurface md:flex-row";
-  const mainWrapperStyles = "flex flex-1 flex-col pb-16 md:pb-0";
   const contentStyles = "mx-auto w-full max-w-5xl flex-1 px-4 py-6 md:px-8 md:py-10";
 
   return (
@@ -59,17 +61,14 @@ export default function RootLayout({ children }: RootLayoutProps) {
             aria-hidden="true"
           />
 
-          {/* 语义化导航侧边栏 */}
-          <Sidebar />
-
-          {/* 主内容容器：页眉 + 核心视图演算区 + 页脚 */}
-          <div className={mainWrapperStyles}>
+          {/* LayoutShell：文章页时侧边栏向左丝滑隐藏，主内容占满全宽 */}
+          <LayoutShell sidebar={<Sidebar />}>
             <Header />
             <main className={contentStyles}>{children}</main>
             <footer className="px-4 py-6 text-center text-xs text-surface-onVariant/70 md:px-8">
               © {new Date().getFullYear()} {siteConfig.name} · 用 Next.js 与 Material Design 3 搭建
             </footer>
-          </div>
+          </LayoutShell>
         </ThemeProvider>
       </body>
     </html>
