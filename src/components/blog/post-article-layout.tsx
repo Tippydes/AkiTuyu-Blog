@@ -32,14 +32,14 @@ export default function PostArticleLayout({
 
   const handleToggle = () => setTocVisible((prev) => !prev);
 
-  // Framer Motion 变体：文章容器水平位移（§1.7 外提）
+  // Framer Motion 变体：文章容器水平位移——目录在左侧时文章右移（§1.7 外提）
   const articlePositionVariants = {
     centered: {
       x: 0,
       transition: { type: "spring" as const, stiffness: 300, damping: 30 },
     },
     shifted: {
-      x: "-7%",
+      x: "7%",
       transition: { type: "spring" as const, stiffness: 300, damping: 30 },
     },
   };
