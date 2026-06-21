@@ -58,7 +58,7 @@ const config: Config = {
           variant: "var(--md-sys-color-outline-variant)",
         },
       },
-      // 字体族：映射根布局注入的 Inter 变量字体，保证全站排版统一
+      // 字体族：映射根布局注入的 Maruko Gothic CJK SC 变量字体，保证全站排版统一
       fontFamily: {
         sans: ["var(--font-sans)", "system-ui", "sans-serif"],
       },

@@ -1,6 +1,6 @@
 import React from "react";
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import Sidebar from "@/components/layout/sidebar";
 import Header from "@/components/layout/header";
@@ -8,8 +8,32 @@ import LayoutShell from "@/components/layout/layout-shell";
 import ThemeProvider from "@/components/providers/theme-provider";
 import { siteConfig } from "@/data/site-config";
 
-// 现代化无衬线变量字体，挂载到 --font-sans 供 Tailwind 排版消费
-const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
+/**
+ * 全站字体：まるこゴシック CJK SC（Maruko Gothic 简体中文版）
+ * 圆体风格贴合 MD3 大圆角美学，自托管 woff2 杜绝外部网络请求（§1.5 零膨胀）。
+ * 三档字重覆盖正文(300)、标准(400)、标题(500)，通过 --font-sans 变量注入 Tailwind。
+ */
+const marukoGothic = localFont({
+  src: [
+    {
+      path: "../../public/fonts/MarukoGothicCJKsc-Light.woff2",
+      weight: "300",
+      style: "normal",
+    },
+    {
+      path: "../../public/fonts/MarukoGothicCJKsc-Regular.woff2",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "../../public/fonts/MarukoGothicCJKsc-Medium.woff2",
+      weight: "500",
+      style: "normal",
+    },
+  ],
+  variable: "--font-sans",
+  display: "swap",
+});
 
 // SEO 元数据统一从站点配置层读取，避免文案散落
 export const metadata: Metadata = {
@@ -44,7 +68,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html
       lang={siteConfig.locale}
-      className={`${inter.variable} scroll-smooth`}
+      className={`${marukoGothic.variable} scroll-smooth`}
       suppressHydrationWarning
     >
       <body className={bodyStyles}>
