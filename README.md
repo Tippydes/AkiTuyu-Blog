@@ -75,14 +75,14 @@ src/
 │   ├── projects/         # 项目 / 作品总览 + [category]/ 三个分类子页（SSG：blog-source/personal/oss）
 │   └── about/            # 关于：作者简介 + 社交外链
 ├── components/           # 【表现层】纯展示 UI 组件（仅靠 props 渲染）
-│   ├── blog/             # 博客业务组件：PostCard、PostList、PostMeta、PostBody、SiteHero、PostArticleLayout（目录状态+文章偏移）、TableOfContents（浮动目录卡片）
+│   ├── blog/             # 博客业务组件：PostCard、PostList、PostMeta、PostBody、SiteHero、PostArticleLayout（目录状态+文章偏移，偏移仅桌面端生效）、TableOfContents（浮动目录卡片）
 │   ├── projects/         # 项目业务组件：ProjectCard、ProjectList
 │   ├── layout/           # 结构级组件：Sidebar、Header、NavLinks、Breadcrumbs、LayoutShell（文章页侧边栏隐藏动画壳）
 │   ├── providers/        # 客户端上下文：ThemeProvider（包裹 next-themes）
 │   └── ui/               # 原子级组件：Badge、Icon、ThemeToggle、Reveal、Avatar（站长头像，next/image）
 │       └── icons/        # Game-Icon-Pack 图标系统：index.ts（注册表）+ game/*.tsx（内联 SVG）
 ├── data/                 # 【静态配置层】navigation.ts（导航：href 可选 + 一级二级菜单 + desktopOnly；「文章分类」「项目/作品」二级由 categoryItems / projects 派生，含 CATEGORIES_BASE_PATH/categoryHref，分类子项跳转 /categories/<key>）、projects.ts（项目分类）、site-config.ts（站点+作者信息）
-├── hooks/                # 【状态逻辑层】自定义 React Hooks
+├── hooks/                # 【状态逻辑层】自定义 React Hooks：use-media-query.ts（原生 matchMedia + useSyncExternalStore 的断点匹配 Hook）
 ├── lib/                  # 【核心服务层】mdx.ts（Markdown 解析 + slug→标题/分类映射 + 标题提取与键入供 TOC）、breadcrumbs.ts、motion.ts、utils.ts
 └── types/                # 【类型层】blog.ts → 文章数据字典（含 TocHeading）；project.ts → 项目数据字典
 
@@ -97,6 +97,7 @@ scripts/
 - 所有 MD3 色彩（Primary / Secondary / Tertiary / Surface / Background / Outline 等）在 `src/app/globals.css` 中以 `--md-sys-color-*` CSS 变量声明，亮色挂在 `:root`、暗色挂在 `.dark`。
 - `tailwind.config.ts` 将这些变量映射为嵌套色彩令牌，从而生成 `bg-surface`、`text-surface-onVariant`、`bg-secondary-container`、`bg-tertiary-container` 等贴合设计语义的工具类。
 - 暗黑模式采用 **`darkMode: 'class'`** + `next-themes`：在根节点挂载 `.dark` 类即可整站换肤；`body` 上的 `transition-colors` 让切换过程平滑无闪烁。
+- `<html>` 与 `body` 均铺设 `--md-sys-color-background` 实底并设 `overscroll-behavior-y: none`：避免手机浏览器滚到底回弹时露出无背景的根元素、被毛玻璃卡片采样到「浏览器顶栏」鬼影；实底随 `.dark` 自动换色，符合亮 / 暗对称。
 - 复用型毛玻璃面板统一封装为 `.glass-panel`；首页四角的樱花 / 天空光晕用 `.aki-immersive-bg`（基于 `color-mix()` 取自 MD3 容器令牌，随主题自适应换色）。
 - 右侧立绘背景用 `.aki-side-art`（**焦点配置系统**）：图片路径、`background-position`（焦点）、`background-size`、容器宽度和暗色遮罩模式全部由 `data/site-config.ts` 的 `heroBackground` 字段驱动，通过 CSS 自定义属性注入——换图只需改配置，无需动 CSS 或组件代码。亮色模式无遮罩（全图通透展示），暗色模式可选 `vignette`（四周暗角）/ `gradient-left`（左侧渐隐）/ `bottom-fade`（底部渐隐）/ `none`。仅桌面端显示，亮 / 暗分别用不同透明度适配。
 - 文章正文用自维护的 `.prose-aki` 组件层排版，颜色严格绑定 MD3 令牌，未引入额外排版插件。

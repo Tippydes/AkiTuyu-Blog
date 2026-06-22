@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import type { TocHeading } from "@/types/blog";
 import TableOfContents from "@/components/blog/table-of-contents";
+import { useMediaQuery } from "@/hooks/use-media-query";
 
 interface PostArticleLayoutProps {
   /** 文章正文内容（由 RSC page.tsx 透传） */
@@ -30,6 +31,10 @@ export default function PostArticleLayout({
   const hasToc = headings.length > 0;
   const [tocVisible, setTocVisible] = useState(hasToc);
 
+  // 目录面板/FAB 均为桌面专属（md 起才渲染），故文章位移也必须仅在桌面生效；
+  // 否则移动端虽无目录，文章仍被 -7% 左移，导致内容偏离正中（修复手机端不居中）
+  const isDesktop = useMediaQuery("(min-width: 768px)");
+
   const handleToggle = () => setTocVisible((prev) => !prev);
 
   // Framer Motion 变体：文章容器水平位移（§1.7 外提）
@@ -50,7 +55,7 @@ export default function PostArticleLayout({
       <motion.div
         className="w-full"
         initial={false}
-        animate={hasToc && tocVisible ? "shifted" : "centered"}
+        animate={isDesktop && hasToc && tocVisible ? "shifted" : "centered"}
         variants={articlePositionVariants}
       >
         {children}
