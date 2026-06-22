@@ -61,8 +61,10 @@ interface RootLayoutProps {
  */
 export default function RootLayout({ children }: RootLayoutProps) {
   // 多端自适应骨架类名按 §1.3 规范抽离至 JSX 外
+  // 为什么 body 不设 bg-background：html 已承担画布背景色（防过度滚动灰色），
+  // 若 body 也设不透明背景则会覆盖 -z-10 的固定背景元素（沉浸光晕 + 立绘）。
   const bodyStyles =
-    "flex min-h-screen w-full flex-col bg-background font-sans text-surface-onSurface md:flex-row";
+    "flex min-h-screen w-full flex-col font-sans text-surface-onSurface md:flex-row";
   const contentStyles = "mx-auto w-full max-w-5xl flex-1 px-4 py-6 md:px-8 md:py-10";
 
   return (

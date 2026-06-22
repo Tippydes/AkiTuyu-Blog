@@ -80,14 +80,21 @@
    * 全站核心交互微动效与全局重置
    * transition-colors 让明暗切换时背景/文字色平滑过渡，消除闪烁
    * ========================================== */
-  /* 为什么同时设置 html 背景：移动端浏览器过度滚动（弹性回弹）时会露出 html 元素，
-   * 若未设置背景色则显示浏览器默认灰色，造成页面底部出现不协调色带 */
+  /* 为什么 html 需要背景色 + overscroll-behavior:
+   * 1. 移动端浏览器过度滚动（弹性回弹）时会露出 html 元素，需设实色防灰色条带；
+   * 2. overscroll-behavior: none 禁止弹性回弹，从根源消除底部 backdrop-blur
+   *    在页面边界处误模糊浏览器 UI 产生的伪影。
+   * 为什么 body 不设 bg-background：html 承担画布背景后，body 若再叠加不透明背景
+   * 则会覆盖其内部 position:fixed + -z-10 的装饰背景元素（沉浸光晕与立绘），
+   * 需让 body 保持透明以让这些元素透出。 */
   html {
     @apply bg-background transition-colors duration-300 ease-in-out;
+    overscroll-behavior: none;
   }
 
   body {
-    @apply bg-background text-background-onBackground antialiased transition-colors duration-300 ease-in-out;
+    @apply text-background-onBackground antialiased transition-colors duration-300 ease-in-out;
+    overscroll-behavior: none;
   }
 }
 
