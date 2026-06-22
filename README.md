@@ -97,7 +97,7 @@ scripts/
 - 所有 MD3 色彩（Primary / Secondary / Tertiary / Surface / Background / Outline 等）在 `src/app/globals.css` 中以 `--md-sys-color-*` CSS 变量声明，亮色挂在 `:root`、暗色挂在 `.dark`。
 - `tailwind.config.ts` 将这些变量映射为嵌套色彩令牌，从而生成 `bg-surface`、`text-surface-onVariant`、`bg-secondary-container`、`bg-tertiary-container` 等贴合设计语义的工具类。
 - 暗黑模式采用 **`darkMode: 'class'`** + `next-themes`：在根节点挂载 `.dark` 类即可整站换肤；`body` 上的 `transition-colors` 让切换过程平滑无闪烁。
-- `<html>` 与 `body` 均铺设 `--md-sys-color-background` 实底并设 `overscroll-behavior-y: none`：避免手机浏览器滚到底回弹时露出无背景的根元素、被毛玻璃卡片采样到「浏览器顶栏」鬼影；实底随 `.dark` 自动换色，符合亮 / 暗对称。
+- 实底背景铺在 `<html>`（**而非 `body`**）并设 `overscroll-behavior-y: none`：避免手机浏览器滚到底回弹时露出无背景的根元素、被毛玻璃卡片采样到「浏览器顶栏」鬼影；实底随 `.dark` 自动换色，符合亮 / 暗对称。**关键**：`body` 必须保持透明（`layout.tsx` 的 `bodyStyles` 不含 `bg-*`），否则 `body` 的不透明背景会盖住挂在其内、`z-index:-10` 的 `.aki-side-art` / `.aki-immersive-bg` 立绘层，导致背景图消失。
 - 复用型毛玻璃面板统一封装为 `.glass-panel`；首页四角的樱花 / 天空光晕用 `.aki-immersive-bg`（基于 `color-mix()` 取自 MD3 容器令牌，随主题自适应换色）。
 - 右侧立绘背景用 `.aki-side-art`（**焦点配置系统**）：图片路径、`background-position`（焦点）、`background-size`、容器宽度和暗色遮罩模式全部由 `data/site-config.ts` 的 `heroBackground` 字段驱动，通过 CSS 自定义属性注入——换图只需改配置，无需动 CSS 或组件代码。亮色模式无遮罩（全图通透展示），暗色模式可选 `vignette`（四周暗角）/ `gradient-left`（左侧渐隐）/ `bottom-fade`（底部渐隐）/ `none`。仅桌面端显示，亮 / 暗分别用不同透明度适配。
 - 文章正文用自维护的 `.prose-aki` 组件层排版，颜色严格绑定 MD3 令牌，未引入额外排版插件。
