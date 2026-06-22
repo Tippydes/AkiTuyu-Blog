@@ -42,7 +42,13 @@ export default function LayoutShell({ sidebar, children }: LayoutShellProps) {
   };
 
   // 主内容区域：文章页时不需要为侧边栏留出空间
-  const mainWrapperStyles = "flex flex-1 flex-col pb-16 md:pb-0";
+  // 为什么条件去除 pb-16：移动端底部导航占据屏幕底部，需留出 4rem 安全距离；
+  // 但文章详情页隐藏了底部导航以提供沉浸阅读体验，此时底部内边距多余，
+  // 会在页面末尾留下一段空白，与背景色差形成可见的灰色条带。
+  const mainWrapperStyles = cn(
+    "flex flex-1 flex-col",
+    !isPostPage && "pb-16 md:pb-0",
+  );
 
   return (
     <>

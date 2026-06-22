@@ -80,6 +80,12 @@
    * 全站核心交互微动效与全局重置
    * transition-colors 让明暗切换时背景/文字色平滑过渡，消除闪烁
    * ========================================== */
+  /* 为什么同时设置 html 背景：移动端浏览器过度滚动（弹性回弹）时会露出 html 元素，
+   * 若未设置背景色则显示浏览器默认灰色，造成页面底部出现不协调色带 */
+  html {
+    @apply bg-background transition-colors duration-300 ease-in-out;
+  }
+
   body {
     @apply bg-background text-background-onBackground antialiased transition-colors duration-300 ease-in-out;
   }

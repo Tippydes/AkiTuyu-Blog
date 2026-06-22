@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useSyncExternalStore } from "react";
 import { motion } from "framer-motion";
 import type { TocHeading } from "@/types/blog";
 import TableOfContents from "@/components/blog/table-of-contents";
@@ -30,6 +30,19 @@ export default function PostArticleLayout({
   const hasToc = headings.length > 0;
   const [tocVisible, setTocVisible] = useState(hasToc);
 
+  // 为什么需要响应式检测：目录面板仅桌面端可见（hidden md:block），
+  // 移动端不应对文章施加水平偏移，否则内容区不居中。
+  // 使用 useSyncExternalStore 订阅媒体查询变更，SSR 回退为 false（假定移动端）。
+  const isDesktop = useSyncExternalStore(
+    (callback) => {
+      const mq = window.matchMedia("(min-width: 768px)");
+      mq.addEventListener("change", callback);
+      return () => mq.removeEventListener("change", callback);
+    },
+    () => window.matchMedia("(min-width: 768px)").matches,
+    () => false,
+  );
+
   const handleToggle = () => setTocVisible((prev) => !prev);
 
   // Framer Motion 变体：文章容器水平位移（§1.7 外提）
@@ -50,7 +63,7 @@ export default function PostArticleLayout({
       <motion.div
         className="w-full"
         initial={false}
-        animate={hasToc && tocVisible ? "shifted" : "centered"}
+        animate={hasToc && tocVisible && isDesktop ? "shifted" : "centered"}
         variants={articlePositionVariants}
       >
         {children}

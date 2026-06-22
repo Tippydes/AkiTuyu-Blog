@@ -68,7 +68,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html
       lang={siteConfig.locale}
-      className={`${marukoGothic.variable} scroll-smooth`}
+      className={`${marukoGothic.variable} scroll-smooth bg-background`}
       suppressHydrationWarning
     >
       <body className={bodyStyles}>
