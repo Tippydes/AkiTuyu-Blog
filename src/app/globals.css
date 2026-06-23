@@ -80,8 +80,29 @@
    * 全站核心交互微动效与全局重置
    * transition-colors 让明暗切换时背景/文字色平滑过渡，消除闪烁
    * ========================================== */
+
+  /*
+   * 为什么把实底背景放在 <html>、而让 <body> 透明：
+   * 手机浏览器滚到底部时地址栏收起会触发动态视口/回弹（rubber-band），
+   * 文档底部一旦露出无背景的根元素，浏览器会用合成器陈旧帧（即顶部标签/书签栏）
+   * 填充该缝隙，又被毛玻璃卡片的 backdrop-blur 模糊，于是卡片底部出现一条
+   * “浏览器顶部区域”的鬼影。给 <html> 铺随 .dark 自动换色的实底即可堵住这道缝。
+   *
+   * 关键：实底必须落在 <html> 而非 <body>。若给 <body> 实底，<html> 又有实底，
+   * 浏览器不再把 body 背景上提到画布，<body> 自身的不透明背景会盖住挂在 body 内、
+   * z-index:-10 的 .aki-side-art / .aki-immersive-bg 立绘层，导致背景图消失。
+   * 故 body 透明、让 html 实底透出立绘层；主题切换的颜色过渡也一并上移到 html（§1.8 对称换肤）。
+   * overscroll-behavior 进一步禁掉回弹，min-height 确保短页面也铺满视口。
+   */
+  html {
+    background-color: var(--md-sys-color-background);
+    min-height: 100%;
+    overscroll-behavior-y: none;
+    transition: background-color 300ms ease-in-out;
+  }
   body {
-    @apply bg-background text-background-onBackground antialiased transition-colors duration-300 ease-in-out;
+    @apply bg-transparent text-background-onBackground antialiased transition-colors duration-300 ease-in-out;
+    overscroll-behavior-y: none;
   }
 }
 

@@ -61,8 +61,11 @@ interface RootLayoutProps {
  */
 export default function RootLayout({ children }: RootLayoutProps) {
   // 多端自适应骨架类名按 §1.3 规范抽离至 JSX 外
+  // 注意：body 不设背景色，实底统一由 globals.css 的 <html> 承载。
+  // 原因：aki-immersive-bg / aki-side-art 是挂在 body 内的 z-index:-10 固定层，
+  // 若 body 自带不透明背景，会盖住这两层立绘背景导致背景图消失（详见 globals.css 注释）。
   const bodyStyles =
-    "flex min-h-screen w-full flex-col bg-background font-sans text-surface-onSurface md:flex-row";
+    "flex min-h-screen w-full flex-col font-sans text-surface-onSurface md:flex-row";
   const contentStyles = "mx-auto w-full max-w-5xl flex-1 px-4 py-6 md:px-8 md:py-10";
 
   return (
