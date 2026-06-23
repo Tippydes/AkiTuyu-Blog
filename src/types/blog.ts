@@ -24,7 +24,7 @@ export interface PostFrontmatter {
   category: PostCategory;
   /** 标签集合（只读，避免组件意外篡改数据层） */
   tags: readonly string[];
-  /** 可选封面图（CSS 渐变占位或 public/ 下资源路径） */
+  /** 可选封面图：public/ 下图片路径（next/image 渲染）或 CSS 渐变串；省略则回退到 site-config 的 placeholderCover 占位图 */
   cover?: string;
 }
 

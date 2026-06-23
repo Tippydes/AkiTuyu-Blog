@@ -4,7 +4,6 @@ date: "2026-05-20"
 excerpt: "如何用 CSS 变量 + Tailwind 嵌套色彩令牌，让整站只靠一个 .dark 类就能平滑换肤，同时彻底告别硬编码 hex。"
 category: "tech"
 tags: ["Tailwind", "MD3", "暗黑模式", "前端"]
-cover: "linear-gradient(135deg, #d1e4ff 0%, #c8f7e0 100%)"
 ---
 
 ## 核心思路：颜色是变量，不是常量

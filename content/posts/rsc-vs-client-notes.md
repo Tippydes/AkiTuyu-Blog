@@ -4,7 +4,6 @@ date: "2026-05-05"
 excerpt: "整理一下 React Server Components 与 Client Components 的边界判断，附上我自己常用的一条决策路径。"
 category: "notes"
 tags: ["React", "RSC", "Next.js", "笔记"]
-cover: "linear-gradient(135deg, #c8f7e0 0%, #ffd1e8 100%)"
 ---
 
 ## 默认服务端，按需客户端

@@ -61,6 +61,14 @@ export const siteConfig = {
     "AkiTuyu —— 一个高度美学化的个人二次元博客：记录技术随笔、番剧杂感与日常碎碎念，落地 Material Design 3 与毛玻璃质感，支持亮 / 暗双模式平滑切换。",
   /** 语言环境 */
   locale: "zh-CN",
+  /**
+   * 文章卡片默认占位图（位于 public/）
+   *
+   * 为什么收口到此：占位图是全站文章共享的「无专属封面时」兜底资源，
+   * 与 avatar / heroBackground 一样统一落在数据层——换图只需改此处，
+   * 无需逐篇 Frontmatter 重复书写，也无需动组件代码（§1.4 数据-UI 分离）。
+   */
+  placeholderCover: "/images/Node.js_logo.svg.png",
   /** 作者信息 */
   author: {
     name: "Tippydes",

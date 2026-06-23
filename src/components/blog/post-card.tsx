@@ -1,14 +1,27 @@
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import type { PostSummary } from "@/types/blog";
 import PostMeta from "@/components/blog/post-meta";
 import Badge from "@/components/ui/badge";
+import { siteConfig } from "@/data/site-config";
 import { cn } from "@/lib/utils";
 
 interface PostCardProps {
   post: PostSummary;
   /** 允许外层布局微调样式（如栅格跨列） */
   className?: string;
+}
+
+/**
+ * 判断封面值是「图片资源路径」还是「CSS 渐变字符串」
+ *
+ * 为什么这样区分：cover 字段按数据层契约可二选一（§1.4）——图片资源以
+ * "/"（public 下资源）或 "http" 开头，其余一律视为 CSS 渐变值。据此决定
+ * 用 next/image 渲染图片，还是走内联 backgroundImage（§1.3 动态值例外）。
+ */
+function isImageCover(cover: string): boolean {
+  return cover.startsWith("/") || cover.startsWith("http");
 }
 
 /**
@@ -24,14 +37,32 @@ export default function PostCard({ post, className }: PostCardProps) {
   const titleStyles =
     "mt-3 text-xl font-bold tracking-tight text-surface-onSurface transition-colors group-hover:text-brand-primary";
 
+  // 封面回退：文章未配专属封面时，统一落到站点占位图（site-config 单一真源，§1.4）
+  const cover = post.cover ?? siteConfig.placeholderCover;
+  // 是否使用的是占位图：占位 Logo 用 contain 完整居中展示，真实封面图用 cover 满铺裁切
+  const usingPlaceholder = !post.cover;
+
   return (
     <article className={cn(cardStyles, className)}>
-      {/* 封面：渐变色值来自数据层 Frontmatter，属「JS 动态计算值」内联样式例外（§1.3） */}
-      <div
-        className="h-32 w-full bg-surface-variant"
-        style={post.cover ? { backgroundImage: post.cover } : undefined}
-        aria-hidden="true"
-      />
+      {/* 封面区：图片资源用 next/image 渲染；CSS 渐变走内联 backgroundImage（§1.3 动态值例外） */}
+      {isImageCover(cover) ? (
+        <div className="relative h-32 w-full bg-surface-variant">
+          <Image
+            src={cover}
+            alt=""
+            fill
+            sizes="(min-width: 768px) 50vw, 100vw"
+            className={cn(usingPlaceholder ? "object-contain p-6" : "object-cover")}
+            aria-hidden="true"
+          />
+        </div>
+      ) : (
+        <div
+          className="h-32 w-full bg-surface-variant"
+          style={{ backgroundImage: cover }}
+          aria-hidden="true"
+        />
+      )}
 
       <div className="flex flex-1 flex-col p-6">
         <PostMeta
