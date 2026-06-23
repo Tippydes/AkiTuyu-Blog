@@ -70,6 +70,8 @@ src/
 │   ├── globals.css       # 全局样式 + MD3 CSS 变量 + .glass-panel / .aki-immersive-bg / .aki-side-art / .prose-aki
 │   ├── layout.tsx        # 全局根布局（纯编排：ThemeProvider + Sidebar + Header + main + footer）
 │                         #   Header 顶部毛玻璃遮罩条内含面包屑导航（桌面端）
+│   ├── not-found.tsx     # 自定义 404（RSC）：渲染在根布局内、不铺不透明底，背景立绘照常透出
+│   ├── error.tsx         # 自定义运行时错误边界（CC）：同理保留背景，提供重试 / 返回首页
 │   ├── page.tsx          # 首页文章流控制器（仅展示最新全量文章流，与分类路由解耦）
 │   ├── posts/[slug]/     # 文章详情（generateStaticParams 静态生成 + generateMetadata）
 │   ├── archive/          # 归档：按年份分组
@@ -103,6 +105,7 @@ scripts/
 - 复用型毛玻璃面板统一封装为 `.glass-panel`；首页四角的樱花 / 天空光晕用 `.aki-immersive-bg`（基于 `color-mix()` 取自 MD3 容器令牌，随主题自适应换色）。
 - 右侧立绘背景用 `.aki-side-art`（**焦点配置系统**）：图片路径、`background-position`（焦点）、`background-size`、容器宽度和暗色遮罩模式全部由 `data/site-config.ts` 的 `heroBackground` 字段驱动，通过 CSS 自定义属性注入——换图只需改配置，无需动 CSS 或组件代码。亮色模式无遮罩（全图通透展示），暗色模式可选 `vignette`（四周暗角）/ `gradient-left`（左侧渐隐）/ `bottom-fade`（底部渐隐）/ `none`。仅桌面端显示，亮 / 暗分别用不同透明度适配。
 - 文章正文用自维护的 `.prose-aki` 组件层排版，颜色严格绑定 MD3 令牌，未引入额外排版插件。
+- 错误页（`app/not-found.tsx` 404、`app/error.tsx` 运行时错误边界）均自定义：Next.js 内置默认 UI 会铺满屏白色实底盖住 `-z-10` 立绘背景，故两页改为渲染在根布局内、只用 `.glass-panel` 卡片承载文案而不铺全屏不透明底，使背景图照常透出（`error.tsx` 按 Next 规定为客户端组件，提供 `reset()` 重试与返回首页入口）。
 
 ## 图标系统（Game-Icon-Pack，零 npm 图标依赖）
 
