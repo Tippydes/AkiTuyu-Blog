@@ -46,13 +46,15 @@ date: "2026-05-28"            # ISO 日期 YYYY-MM-DD，用于排序与 <time>
 excerpt: "列表/卡片中展示的摘要"
 category: "tech"              # tech | anime | life | notes
 tags: ["标签A", "标签B"]
-cover: "linear-gradient(135deg, #ffd1e8 0%, #d1e4ff 100%)"   # 可选，卡片封面（CSS 渐变或图片地址）
+cover: "/images/my-cover.png"   # 可选，卡片封面：public 下图片路径（next/image 渲染）或 CSS 渐变串；省略则回退到站点占位图
 ---
 
 正文用标准 Markdown 书写（标题、列表、引用、代码块均会套用 `.prose-aki` 排版）。
 ```
 
 阅读时长、本地化日期、按年份归档等派生字段全部由 `src/lib/mdx.ts` 自动计算，无需手填。
+
+> 📌 **卡片封面**：`cover` 省略时，卡片封面区统一回退到 `data/site-config.ts` 的 `placeholderCover` 占位图（默认 `/images/Node.js_logo.svg.png`，以 `next/image` `object-contain` 居中展示）；换全站占位图只需改这一处配置。若 `cover` 填 public 下图片路径，则按真实封面 `object-cover` 满铺；填 CSS 渐变串则铺为渐变色块。
 
 ## 目录结构
 
@@ -81,7 +83,7 @@ src/
 │   ├── providers/        # 客户端上下文：ThemeProvider（包裹 next-themes）
 │   └── ui/               # 原子级组件：Badge、Icon、ThemeToggle、Reveal、Avatar（站长头像，next/image）
 │       └── icons/        # Game-Icon-Pack 图标系统：index.ts（注册表）+ game/*.tsx（内联 SVG）
-├── data/                 # 【静态配置层】navigation.ts（导航：href 可选 + 一级二级菜单 + desktopOnly；「文章分类」「项目/作品」二级由 categoryItems / projects 派生，含 CATEGORIES_BASE_PATH/categoryHref，分类子项跳转 /categories/<key>）、projects.ts（项目分类）、site-config.ts（站点+作者信息）
+├── data/                 # 【静态配置层】navigation.ts（导航：href 可选 + 一级二级菜单 + desktopOnly；「文章分类」「项目/作品」二级由 categoryItems / projects 派生，含 CATEGORIES_BASE_PATH/categoryHref，分类子项跳转 /categories/<key>）、projects.ts（项目分类）、site-config.ts（站点+作者信息+文章卡片占位图 placeholderCover）
 ├── hooks/                # 【状态逻辑层】自定义 React Hooks：use-media-query.ts（原生 matchMedia + useSyncExternalStore 的断点匹配 Hook）
 ├── lib/                  # 【核心服务层】mdx.ts（Markdown 解析 + slug→标题/分类映射 + 标题提取与键入供 TOC）、breadcrumbs.ts、motion.ts、utils.ts
 └── types/                # 【类型层】blog.ts → 文章数据字典（含 TocHeading）；project.ts → 项目数据字典

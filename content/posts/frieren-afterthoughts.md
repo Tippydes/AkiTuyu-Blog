@@ -4,7 +4,6 @@ date: "2026-05-12"
 excerpt: "一部把节奏放得很慢的番，却让我久违地认真想了想「记住一个人」这件事到底意味着什么。"
 category: "anime"
 tags: ["番剧", "芙莉莲", "杂感"]
-cover: "linear-gradient(135deg, #e2d1ff 0%, #d1e4ff 100%)"
 ---
 
 ## 慢，是它最大的温柔

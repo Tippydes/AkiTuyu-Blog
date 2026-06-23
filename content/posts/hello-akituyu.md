@@ -4,7 +4,6 @@ date: "2026-05-28"
 excerpt: "用 Next.js + Material Design 3 搭一间属于自己的二次元小屋，聊聊它为什么长这样，以及我想在这里写点什么。"
 category: "life"
 tags: ["建站", "碎碎念", "MD3"]
-cover: "linear-gradient(135deg, #ffd1e8 0%, #d1e4ff 100%)"
 ---
 
 ## 为什么又折腾了一个博客
