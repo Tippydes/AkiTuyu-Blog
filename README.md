@@ -35,6 +35,17 @@ npm run start
 npm run lint
 ```
 
+## 部署到 Cloudflare
+
+项目通过 GitHub Actions 使用 OpenNext 部署到 Cloudflare Workers。请在仓库的 GitHub Secrets 中配置：
+
+| Secret | 用途 |
+| --- | --- |
+| `CLOUDFLARE_API_TOKEN` | Cloudflare API Token，需要 `Workers Scripts:Edit` 与 `Account Settings:Read` 权限 |
+| `CLOUDFLARE_ACCOUNT_ID` | Cloudflare Account ID |
+
+本地可以运行 `npm run preview` 构建并预览 Cloudflare Worker。推送到 `main` 分支后，GitHub Actions 会自动执行检查，并通过与 `npm run deploy` 等价的 OpenNext 构建与部署流程完成部署。
+
 ## 写一篇新文章
 
 在 `content/posts/` 下新建一个 `.md` 文件，文件名即文章 `slug`（如 `my-post.md` → `/posts/my-post`）。文件顶部用 Frontmatter 声明元信息：

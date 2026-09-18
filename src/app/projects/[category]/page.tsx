@@ -21,6 +21,8 @@ export function generateStaticParams(): { category: string }[] {
   return projectCategories.map((category) => ({ category: category.key }));
 }
 
+export const dynamicParams = false;
+
 /**
  * 按分类动态生成 SEO 元数据（标题 / 描述）。
  */
