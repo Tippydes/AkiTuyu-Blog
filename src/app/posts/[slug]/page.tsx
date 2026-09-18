@@ -21,6 +21,8 @@ export function generateStaticParams(): { slug: string }[] {
   return getPostSlugs().map((slug) => ({ slug }));
 }
 
+export const dynamicParams = false;
+
 /**
  * 按文章内容动态生成 SEO 元数据（标题 / 描述）。
  */
